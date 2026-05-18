@@ -1,0 +1,68 @@
+# macOS
+.DS_Store
+
+# Secrets
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+secrets/
+
+# Python / local tooling
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+
+# Node / frontend tooling if added later
+node_modules/
+dist/
+build/
+
+# Large local artifacts
+external/*
+!external/README.md
+
+datasets/*
+!datasets/README.md
+!datasets/**/*.md
+!datasets/**/*.json
+!datasets/**/*.yaml
+!datasets/**/*.yml
+
+results/*
+!results/README.md
+!results/**/*.md
+!results/**/*summary*.json
+!results/**/*summary*.csv
+
+logs/*
+!logs/README.md
+
+# Benchmark/VM artifacts anywhere in the repo
+*.vmdk
+*.vmx
+*.vmem
+*.vmsn
+*.vmss
+*.ova
+*.ovf
+*.qcow2
+*.iso
+*.zip
+*.tar
+*.tar.gz
+*.tgz
+*.7z
+*.mp4
+*.mov
+*.mkv
+*.png
+*.jpg
+*.jpeg
+*.webp
+
