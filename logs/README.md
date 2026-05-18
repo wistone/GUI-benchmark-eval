@@ -1,6 +1,5 @@
 # Logs
 
-This directory is for transient local logs. Raw logs are ignored by Git.
+这里存放临时本地日志。原始日志默认被 Git 忽略。
 
-Promote important findings into `docs/` as summarized reports.
-
+如果日志里有重要结论，应整理成摘要报告放到 `docs/`。

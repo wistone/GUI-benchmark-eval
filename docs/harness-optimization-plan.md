@@ -1,46 +1,45 @@
-# Harness Optimization Plan
+# Harness 优化计划
 
-## Core Hypothesis
+## 核心假设
 
-For GUI agents, non-model system choices can materially affect benchmark success rate. Improvements should be measured by paired comparisons against the same task subset.
+对 GUI Agent 来说，非模型层系统设计会显著影响 benchmark 成功率。所有优化都应该在同一任务子集上做 paired comparison，而不是只看单次总分。
 
-## Optimization Ladder
+## 优化阶梯
 
-| Version | Change | Expected Benefit | Main Risk |
+| 版本 | 改动 | 预期收益 | 主要风险 |
 | --- | --- | --- | --- |
-| v0 | Minimal baseline | Establish reference | Low score |
-| v1 | Prompt and action schema cleanup | Fewer invalid/no-op actions | Over-constraining model |
-| v2 | Observation variants: screenshot, a11y tree, OCR | Better grounding and UI understanding | More tokens |
-| v3 | State check after each action | Catch failed clicks and stale states | Extra calls/time |
-| v4 | Generic recovery policies | Recover from popups, wrong focus, save dialogs | Hidden benchmark hacks |
-| v5 | History compression | Lower token cost and reduce confusion | Losing useful context |
-| v6 | Generic app recipes | More stable office/browser/editor workflows | Too much hand design |
-| v7 | End-of-task self-check | Reduce premature DONE | More steps |
+| v0 | 最小 baseline | 建立参考线 | 分数偏低 |
+| v1 | 清理 prompt 和 action schema | 减少无效动作和 no-op | 对模型约束过强 |
+| v2 | 对比 screenshot、a11y tree、OCR 等观测形式 | 提升 grounding 和 UI 理解 | token 用量上升 |
+| v3 | 每个动作后做状态检查 | 捕捉点击失败、状态未变化、旧截图 | 调用次数和耗时增加 |
+| v4 | 通用恢复策略 | 从弹窗、焦点错误、保存对话框中恢复 | 可能滑向 benchmark hack |
+| v5 | 历史压缩 | 降低 token 成本，减少上下文污染 | 丢失有用历史 |
+| v6 | 通用 app recipe | 提升 Office、浏览器、编辑器任务稳定性 | 设计过于 hand-crafted |
+| v7 | 任务结束前自检 | 减少过早 DONE | 步数增加 |
 
-## Failure Taxonomy
+## 失败类型 taxonomy
 
-Use these categories in reports:
+报告中使用这些失败类型：
 
-- environment/setup failure
-- model instruction misunderstanding
-- visual grounding failure
-- wrong app/window focus
-- no-op or invalid action
-- missing scroll/navigation
-- dialog/popup handling failure
-- file save/export failure
-- premature done
-- evaluator mismatch or ambiguous task
-- token/time/step budget exhaustion
+- 环境或安装失败
+- 模型理解任务错误
+- 视觉 grounding 错误
+- 应用或窗口焦点错误
+- 无效动作或 no-op
+- 滚动/导航遗漏
+- 弹窗或对话框处理失败
+- 文件保存/导出失败
+- 过早宣布 DONE
+- evaluator 不匹配或任务歧义
+- token、时间或步数预算耗尽
 
-## Reporting Rule
+## 报告规则
 
-For each optimization, report:
+每个优化版本都需要报告：
 
-- task set version
-- baseline score
-- optimized score
-- pass-to-fail and fail-to-pass task ids
-- token and time delta
-- top changed failure modes
-
+- 任务集合版本
+- baseline 分数
+- optimized 分数
+- 从 pass 变 fail、从 fail 变 pass 的任务 id
+- token 和耗时变化
+- 主要变化的失败类型

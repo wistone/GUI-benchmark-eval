@@ -1,10 +1,9 @@
 # Scripts
 
-Reusable scripts will live here. Planned helpers:
+这里存放可复用脚本。计划包含：
 
-- environment checks
-- OSWorld task subset generation
-- run report aggregation
-- token/time analysis
-- failure taxonomy labeling
-
+- 环境检查
+- OSWorld 任务子集生成
+- 运行报告聚合
+- token / 耗时分析
+- 失败类型标注
