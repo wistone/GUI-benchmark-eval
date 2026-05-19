@@ -1,0 +1,559 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>OSWorld Codex Eval 10-Domain 解题分析</title>
+<style>
+:root { --bg:#f7f8fb; --card:#fff; --text:#172033; --muted:#667085; --line:#d8dee9; --ok:#087443; --bad:#b42318; --code:#101828; }
+body { margin:0; padding:32px; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,"PingFang SC","Hiragino Sans GB",sans-serif; background:var(--bg); color:var(--text); line-height:1.55; }
+header, section.task { max-width:1180px; margin:0 auto 24px; background:var(--card); border:1px solid var(--line); border-radius:16px; padding:24px; box-shadow:0 1px 2px rgba(16,24,40,.05); }
+h1 { margin:0 0 8px; font-size:28px; }
+h2 { border-bottom:1px solid var(--line); padding-bottom:10px; margin-top:0; }
+h3 { margin-top:22px; }
+.meta, .small, figcaption { color:var(--muted); font-size:13px; }
+.domain { font-size:13px; color:var(--muted); font-weight:500; }
+.badge { display:inline-block; padding:2px 8px; border-radius:999px; font-size:12px; font-weight:700; color:white; vertical-align:middle; }
+.badge.pass { background:var(--ok); } .badge.fail { background:var(--bad); }
+table { width:100%; border-collapse:collapse; margin:12px 0; }
+th, td { border:1px solid var(--line); padding:8px 10px; vertical-align:top; text-align:left; }
+th { background:#eef2f7; }
+td.num { width:48px; text-align:center; font-weight:700; }
+code, pre { font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace; }
+code { color:var(--code); font-size:12px; word-break:break-word; }
+pre { white-space:pre-wrap; background:#101828; color:#f8fafc; padding:12px; border-radius:10px; overflow:auto; font-size:12px; }
+.screens { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:14px; margin:12px 0; }
+.screens figure { margin:0; }
+.screens img { max-width:100%; border:1px solid var(--line); border-radius:10px; background:#eee; }
+.thumb { width:180px; max-height:110px; object-fit:contain; border:1px solid var(--line); border-radius:8px; background:#eee; }
+.steps th:nth-child(2) { width:32%; } .steps th:nth-child(3) { width:42%; }
+.eval-line { color:#344054; }
+a { color:#175cd3; }
+</style>
+</head>
+<body>
+<header>
+  <h1>OSWorld Codex Eval 10-Domain 解题分析</h1>
+  <p class="meta">生成时间：2026-05-19 16:20:04 · 结果目录：<code>/Users/shijianping/Work/GUI-benchmark-eval/results/osworld_codex_eval_10domain</code></p>
+  <p>本报告分析一轮“每个 OSWorld domain 抽 1 题”的本地 Codex CLI 解题评测。流程为：读取 OSWorld 任务 JSON → VM reset/setup → 截图 → Codex 生成 pyautogui action → VM 执行动作 → OSWorld evaluator 打分。</p>
+  <p><b>总分：</b>8/10 · <b>满分任务：</b>8/10 · <b>运行状态：</b>10/10 ok</p>
+  <h2>总览表</h2>
+  <table><thead><tr><th>#</th><th>Domain</th><th>类别</th><th>Task ID</th><th>Steps</th><th>Score</th></tr></thead><tbody><tr><td>1</td><td>chrome</td><td>Chrome 浏览器</td><td>bb5e4c0d-f964-439c-97b6-bdb9747de3f4</td><td>5</td><td><span class="badge pass">1</span></td></tr><tr><td>2</td><td>gimp</td><td>GIMP 图像编辑</td><td>7767eef2-56a3-4cea-8c9f-48c070c7d65b</td><td>8</td><td><span class="badge pass">1</span></td></tr><tr><td>3</td><td>libreoffice_calc</td><td>LibreOffice Calc 表格</td><td>01b269ae-2111-4a07-81fd-3fcd711993b0</td><td>13</td><td><span class="badge pass">1</span></td></tr><tr><td>4</td><td>libreoffice_impress</td><td>LibreOffice Impress 演示</td><td>2cd43775-7085-45d8-89fa-9e35c0a915cf</td><td>11</td><td><span class="badge pass">1</span></td></tr><tr><td>5</td><td>libreoffice_writer</td><td>LibreOffice Writer 文档</td><td>0e47de2a-32e0-456c-a366-8c607ef7a9d2</td><td>7</td><td><span class="badge pass">1</span></td></tr><tr><td>6</td><td>multi_apps</td><td>跨应用 / 系统默认应用</td><td>937087b6-f668-4ba6-9110-60682ee33441</td><td>10</td><td><span class="badge fail">0</span></td></tr><tr><td>7</td><td>os</td><td>Ubuntu 系统设置</td><td>28cc3b7e-b194-4bc9-8353-d04c0f4d56d2</td><td>3</td><td><span class="badge pass">1</span></td></tr><tr><td>8</td><td>thunderbird</td><td>Thunderbird 邮件客户端</td><td>a10b69e1-6034-4a2b-93e1-571d45194f75</td><td>10</td><td><span class="badge pass">1</span></td></tr><tr><td>9</td><td>vlc</td><td>VLC 播放器</td><td>215dfd39-f493-4bc3-a027-8a97d72c61bf</td><td>15</td><td><span class="badge fail">0</span></td></tr><tr><td>10</td><td>vs_code</td><td>VS Code 编辑器</td><td>57242fad-77ca-454f-b71b-f187181a9f23</td><td>7</td><td><span class="badge pass">1</span></td></tr></tbody></table>
+</header>
+
+<section class="task" id="chrome">
+  <h2>1. Chrome 浏览器 <span class="domain">chrome</span> <span class="badge pass">score=1</span></h2>
+  <div class="meta"><b>Task ID:</b> <code>bb5e4c0d-f964-439c-97b6-bdb9747de3f4</code> · <b>Steps:</b> 5 · <b>Status:</b> ok</div>
+  <h3>题目</h3>
+  <p>Can you make Bing the main search engine when I look stuff up on the internet?</p>
+  <h3>解题过程概述</h3>
+  <p>Codex 先进入 Chrome 地址栏，直接打开搜索引擎设置页，然后点击默认搜索引擎相关控件，把默认搜索引擎切到 Bing，最后 DONE。</p>
+  <div class="screens"><figure><img src="chrome/bb5e4c0d-f964-439c-97b6-bdb9747de3f4/step_1.png" loading="lazy"/><figcaption>Step 1 前截图</figcaption></figure><figure><img src="chrome/bb5e4c0d-f964-439c-97b6-bdb9747de3f4/step_5.png" loading="lazy"/><figcaption>最后一步前截图</figcaption></figure></div>
+  <h3>逐步动作轨迹</h3>
+  <table class="steps"><thead><tr><th>Step</th><th>Codex thought</th><th>执行 action</th><th>截图</th></tr></thead><tbody><tr><td class="num">1</td><td>Open the browser to change its default search engine to Bing.</td><td><code>pyautogui.click(35, 65)</code></td><td><a href="chrome/bb5e4c0d-f964-439c-97b6-bdb9747de3f4/step_1.png"><img class="thumb" src="chrome/bb5e4c0d-f964-439c-97b6-bdb9747de3f4/step_1.png" loading="lazy" /></a></td></tr>
+<tr><td class="num">2</td><td>Open Chromium&#x27;s search engine settings directly so Bing can be set as the default.</td><td><code>import pyautogui; pyautogui.write(&#x27;chrome://settings/searchEngines&#x27;); pyautogui.press(&#x27;enter&#x27;)</code></td><td><a href="chrome/bb5e4c0d-f964-439c-97b6-bdb9747de3f4/step_2.png"><img class="thumb" src="chrome/bb5e4c0d-f964-439c-97b6-bdb9747de3f4/step_2.png" loading="lazy" /></a></td></tr>
+<tr><td class="num">3</td><td>Open the actions menu for Microsoft Bing so it can be made the default search engine.</td><td><code>pyautogui.click(1292, 729)</code></td><td><a href="chrome/bb5e4c0d-f964-439c-97b6-bdb9747de3f4/step_3.png"><img class="thumb" src="chrome/bb5e4c0d-f964-439c-97b6-bdb9747de3f4/step_3.png" loading="lazy" /></a></td></tr>
+<tr><td class="num">4</td><td>Select the Bing menu option to make it the default search engine.</td><td><code>pyautogui.click(1248, 759)</code></td><td><a href="chrome/bb5e4c0d-f964-439c-97b6-bdb9747de3f4/step_4.png"><img class="thumb" src="chrome/bb5e4c0d-f964-439c-97b6-bdb9747de3f4/step_4.png" loading="lazy" /></a></td></tr>
+<tr><td class="num">5</td><td>Microsoft Bing is already labeled as the default search engine, so the task is complete.</td><td><code>DONE</code></td><td><a href="chrome/bb5e4c0d-f964-439c-97b6-bdb9747de3f4/step_5.png"><img class="thumb" src="chrome/bb5e4c0d-f964-439c-97b6-bdb9747de3f4/step_5.png" loading="lazy" /></a></td></tr></tbody></table>
+  <h3>评分方式与结果</h3>
+  <p>evaluator 读取 Chrome 默认搜索引擎，要求结果在 [Microsoft Bing, Bing] 中。score=1 表示最终默认搜索引擎匹配 Bing。</p>
+  <details><summary>原始 evaluator 配置</summary><pre>{
+  &quot;postconfig&quot;: [
+    {
+      &quot;type&quot;: &quot;launch&quot;,
+      &quot;parameters&quot;: {
+        &quot;command&quot;: [
+          &quot;pkill&quot;,
+          &quot;chrome&quot;
+        ]
+      }
+    },
+    {
+      &quot;type&quot;: &quot;launch&quot;,
+      &quot;parameters&quot;: {
+        &quot;command&quot;: [
+          &quot;google-chrome&quot;,
+          &quot;--remote-debugging-port=1337&quot;
+        ]
+      }
+    },
+    {
+      &quot;type&quot;: &quot;sleep&quot;,
+      &quot;parameters&quot;: {
+        &quot;seconds&quot;: 3
+      }
+    }
+  ],
+  &quot;func&quot;: &quot;match_in_list&quot;,
+  &quot;result&quot;: {
+    &quot;type&quot;: &quot;default_search_engine&quot;
+  },
+  &quot;expected&quot;: {
+    &quot;type&quot;: &quot;rule&quot;,
+    &quot;rules&quot;: {
+      &quot;expected&quot;: [
+        &quot;Microsoft Bing&quot;,
+        &quot;Bing&quot;
+      ]
+    }
+  }
+}</pre></details>
+  <p class="eval-line"><b>摘要：</b>func=match_in_list; result.type=default_search_engine; expected={&quot;expected&quot;: [&quot;Microsoft Bing&quot;, &quot;Bing&quot;]}</p>
+</section>
+
+<section class="task" id="gimp">
+  <h2>2. GIMP 图像编辑 <span class="domain">gimp</span> <span class="badge pass">score=1</span></h2>
+  <div class="meta"><b>Task ID:</b> <code>7767eef2-56a3-4cea-8c9f-48c070c7d65b</code> · <b>Steps:</b> 8 · <b>Status:</b> ok</div>
+  <h3>题目</h3>
+  <p>Please help change GIMP&#x27;s theme from dark to light.</p>
+  <h3>解题过程概述</h3>
+  <p>Codex 从桌面/菜单打开 GIMP，进入偏好设置相关菜单，选择 Light 主题并确认，最后退出/完成。</p>
+  <div class="screens"><figure><img src="gimp/7767eef2-56a3-4cea-8c9f-48c070c7d65b/step_1.png" loading="lazy"/><figcaption>Step 1 前截图</figcaption></figure><figure><img src="gimp/7767eef2-56a3-4cea-8c9f-48c070c7d65b/step_8.png" loading="lazy"/><figcaption>最后一步前截图</figcaption></figure></div>
+  <h3>逐步动作轨迹</h3>
+  <table class="steps"><thead><tr><th>Step</th><th>Codex thought</th><th>执行 action</th><th>截图</th></tr></thead><tbody><tr><td class="num">1</td><td>Open GIMP from the dock to begin changing its theme setting.</td><td><code>pyautogui.click(33, 537)</code></td><td><a href="gimp/7767eef2-56a3-4cea-8c9f-48c070c7d65b/step_1.png"><img class="thumb" src="gimp/7767eef2-56a3-4cea-8c9f-48c070c7d65b/step_1.png" loading="lazy" /></a></td></tr>
+<tr><td class="num">2</td><td>Open GIMP&#x27;s preferences path by starting from the Edit menu.</td><td><code>pyautogui.click(127, 76)</code></td><td><a href="gimp/7767eef2-56a3-4cea-8c9f-48c070c7d65b/step_2.png"><img class="thumb" src="gimp/7767eef2-56a3-4cea-8c9f-48c070c7d65b/step_2.png" loading="lazy" /></a></td></tr>
+<tr><td class="num">3</td><td>The Edit menu is open and shows the Preferences entry, which is the next step toward changing the theme.</td><td><code>pyautogui.click(186, 648)</code></td><td><a href="gimp/7767eef2-56a3-4cea-8c9f-48c070c7d65b/step_3.png"><img class="thumb" src="gimp/7767eef2-56a3-4cea-8c9f-48c070c7d65b/step_3.png" loading="lazy" /></a></td></tr>
+<tr><td class="num">4</td><td>The Preferences dialog is open with Interface expanded; selecting the Theme section is the next step to switch from dark to light.</td><td><code>pyautogui.click(155, 702)</code></td><td><a href="gimp/7767eef2-56a3-4cea-8c9f-48c070c7d65b/step_4.png"><img class="thumb" src="gimp/7767eef2-56a3-4cea-8c9f-48c070c7d65b/step_4.png" loading="lazy" /></a></td></tr>
+<tr><td class="num">5</td><td>The Preferences dialog is on Interface &gt; Icon Theme; selecting the Theme section is the next step to switch GIMP from dark to light.</td><td><code>pyautogui.click(154, 677)</code></td><td><a href="gimp/7767eef2-56a3-4cea-8c9f-48c070c7d65b/step_5.png"><img class="thumb" src="gimp/7767eef2-56a3-4cea-8c9f-48c070c7d65b/step_5.png" loading="lazy" /></a></td></tr>
+<tr><td class="num">6</td><td>The Preferences dialog is open on Interface &gt; Theme, and the next step is to select the Light theme from the list.</td><td><code>pyautogui.click(365, 631)</code></td><td><a href="gimp/7767eef2-56a3-4cea-8c9f-48c070c7d65b/step_6.png"><img class="thumb" src="gimp/7767eef2-56a3-4cea-8c9f-48c070c7d65b/step_6.png" loading="lazy" /></a></td></tr>
+<tr><td class="num">7</td><td>The Light theme appears selected in Preferences, so the next step is to confirm the change by clicking OK.</td><td><code>pyautogui.click(826, 874)</code></td><td><a href="gimp/7767eef2-56a3-4cea-8c9f-48c070c7d65b/step_7.png"><img class="thumb" src="gimp/7767eef2-56a3-4cea-8c9f-48c070c7d65b/step_7.png" loading="lazy" /></a></td></tr>
+<tr><td class="num">8</td><td>GIMP is now displayed with a light interface, indicating the theme change has been applied successfully.</td><td><code>DONE</code></td><td><a href="gimp/7767eef2-56a3-4cea-8c9f-48c070c7d65b/step_8.png"><img class="thumb" src="gimp/7767eef2-56a3-4cea-8c9f-48c070c7d65b/step_8.png" loading="lazy" /></a></td></tr></tbody></table>
+  <h3>评分方式与结果</h3>
+  <p>evaluator 读取 GIMP gimprc 配置文件，检查 theme 是否为 &quot;Light&quot;。score=1 表示配置已写成 Light。</p>
+  <details><summary>原始 evaluator 配置</summary><pre>{
+  &quot;postconfig&quot;: [
+    {
+      &quot;type&quot;: &quot;execute&quot;,
+      &quot;parameters&quot;: {
+        &quot;command&quot;: [
+          &quot;python3&quot;,
+          &quot;-c&quot;,
+          &quot;import time; import pyautogui; time.sleep(1);pyautogui.hotkey([\&quot;ctrl\&quot;, \&quot;q\&quot;]);&quot;
+        ]
+      }
+    },
+    {
+      &quot;type&quot;: &quot;sleep&quot;,
+      &quot;parameters&quot;: {
+        &quot;seconds&quot;: 0.5
+      }
+    }
+  ],
+  &quot;func&quot;: &quot;check_config_status&quot;,
+  &quot;expected&quot;: {
+    &quot;type&quot;: &quot;rule&quot;,
+    &quot;rules&quot;: {
+      &quot;type:&quot;: &quot;key-value&quot;,
+      &quot;key&quot;: &quot;theme&quot;,
+      &quot;value&quot;: &quot;\&quot;Light\&quot;&quot;
+    }
+  },
+  &quot;result&quot;: {
+    &quot;type&quot;: &quot;gimp_config_file&quot;,
+    &quot;file_name&quot;: &quot;gimprc&quot;,
+    &quot;dest&quot;: &quot;gimprc&quot;
+  }
+}</pre></details>
+  <p class="eval-line"><b>摘要：</b>func=check_config_status; result.type=gimp_config_file; expected={&quot;type:&quot;: &quot;key-value&quot;, &quot;key&quot;: &quot;theme&quot;, &quot;value&quot;: &quot;\&quot;Light\&quot;&quot;}</p>
+</section>
+
+<section class="task" id="libreoffice_calc">
+  <h2>3. LibreOffice Calc 表格 <span class="domain">libreoffice_calc</span> <span class="badge pass">score=1</span></h2>
+  <div class="meta"><b>Task ID:</b> <code>01b269ae-2111-4a07-81fd-3fcd711993b0</code> · <b>Steps:</b> 13 · <b>Status:</b> ok</div>
+  <h3>题目</h3>
+  <p>Fill all the blank cells in B1:E30 with the value in the cell above it. Finish the work and don&#x27;t touch irrelevant regions, even if they are blank.</p>
+  <h3>解题过程概述</h3>
+  <p>Codex 使用名称框选择多个连续区域，并反复执行 ctrl+d 填充向下，把 B/C 列空白块用上方值填满。</p>
+  <div class="screens"><figure><img src="libreoffice_calc/01b269ae-2111-4a07-81fd-3fcd711993b0/step_1.png" loading="lazy"/><figcaption>Step 1 前截图</figcaption></figure><figure><img src="libreoffice_calc/01b269ae-2111-4a07-81fd-3fcd711993b0/step_13.png" loading="lazy"/><figcaption>最后一步前截图</figcaption></figure></div>
+  <h3>逐步动作轨迹</h3>
+  <table class="steps"><thead><tr><th>Step</th><th>Codex thought</th><th>执行 action</th><th>截图</th></tr></thead><tbody><tr><td class="num">1</td><td>Start with the first contiguous blank block in column B by selecting B2:B6 and filling down from the top cell.</td><td><code>pyautogui.click(120, 186); pyautogui.hotkey(&#x27;ctrl&#x27;, &#x27;a&#x27;); pyautogui.write(&#x27;B2:B6&#x27;); pyautogui.press(&#x27;enter&#x27;); pyautogui.hotkey(&#x27;ctrl&#x27;, &#x27;d&#x27;)</code></td><td><a href="libreoffice_calc/01b269ae-2111-4a07-81fd-3fcd711993b0/step_1.png"><img class="thumb" src="libreoffice_calc/01b269ae-2111-4a07-81fd-3fcd711993b0/step_1.png" loading="lazy" /></a></td></tr>
+<tr><td class="num">2</td><td>Continue filling column B by propagating the next block from the existing label in B7 down through B18.</td><td><code>pyautogui.click(120, 186); pyautogui.hotkey(&#x27;ctrl&#x27;, &#x27;a&#x27;); pyautogui.write(&#x27;B7:B18&#x27;); pyautogui.press(&#x27;enter&#x27;); pyautogui.hotkey(&#x27;ctrl&#x27;, &#x27;d&#x27;)</code></td><td><a href="libreoffice_calc/01b269ae-2111-4a07-81fd-3fcd711993b0/step_2.png"><img class="thumb" src="libreoffice_calc/01b269ae-2111-4a07-81fd-3fcd711993b0/step_2.png" loading="lazy" /></a></td></tr>
+<tr><td class="num">3</td><td>The next blank block in column B starts under the existing value at B19, so fill B19:B24 downward from its top cell.</td><td><code>pyautogui.click(120, 186); pyautogui.hotkey(&#x27;ctrl&#x27;, &#x27;a&#x27;); pyautogui.write(&#x27;B19:B24&#x27;); pyautogui.press(&#x27;enter&#x27;); pyautogui.hotkey(&#x27;ctrl&#x27;, &#x27;d&#x27;)</code></td><td><a href="libreoffice_calc/01b269ae-2111-4a07-81fd-3fcd711993b0/step_3.png"><img class="thumb" src="libreoffice_calc/01b269ae-2111-4a07-81fd-3fcd711993b0/step_3.png" loading="lazy" /></a></td></tr>
+<tr><td class="num">4</td><td>Finish the remaining blank block in column B by filling rows 25 through 30 from the existing value at B25.</td><td><code>pyautogui.click(120, 186); pyautogui.hotkey(&#x27;ctrl&#x27;, &#x27;a&#x27;); pyautogui.write(&#x27;B25:B30&#x27;); pyautogui.press(&#x27;enter&#x27;); pyautogui.hotkey(&#x27;ctrl&#x27;, &#x27;d&#x27;)</code></td><td><a href="libreoffice_calc/01b269ae-2111-4a07-81fd-3fcd711993b0/step_4.png"><img class="thumb" src="libreoffice_calc/01b269ae-2111-4a07-81fd-3fcd711993b0/step_4.png" loading="lazy" /></a></td></tr>
+<tr><td class="num">5</td><td>Column B is filled. The next blank block is in column C under the first student name, so fill C2:C4 downward from C2.</td><td><code>pyautogui.click(111, 185); pyautogui.hotkey(&#x27;ctrl&#x27;, &#x27;a&#x27;); pyautogui.write(&#x27;C2:C4&#x27;); pyautogui.press(&#x27;enter&#x27;); pyautogui.hotkey(&#x27;ctrl&#x27;, &#x27;d&#x27;)</code></td><td><a href="libreoffice_calc/01b269ae-2111-4a07-81fd-3fcd711993b0/step_5.png"><img class="thumb" src="libreoffice_calc/01b269ae-2111-4a07-81fd-3fcd711993b0/step_5.png" loading="lazy" /></a></td></tr>
+<tr><td class="num">6</td><td>The next blank in column C is row 6 under the existing name at C5, so fill the contiguous block C5:C6 downward.</td><td><code>pyautogui.click(111, 185); pyautogui.hotkey(&#x27;ctrl&#x27;, &#x27;a&#x27;); pyautogui.write(&#x27;C5:C6&#x27;); pyautogui.press(&#x27;enter&#x27;); pyautogui.hotkey(&#x27;ctrl&#x27;, &#x27;d&#x27;)</code></td><td><a href="libreoffice_calc/01b269ae-2111-4a07-81fd-3fcd711993b0/step_6.png"><img class="thumb" src="libreoffice_calc/01b269ae-2111-4a07-81fd-3fcd711993b0/step_6.png" loading="lazy" /></a></td></tr>
+<tr><td class="num">7</td><td>Continue filling column C by propagating the student name from C7 down through the next blank block ending at C11.</td><td><code>pyautogui.click(120, 186); pyautogui.hotkey(&#x27;ctrl&#x27;, &#x27;a&#x27;); pyautogui.write(&#x27;C7:C11&#x27;); pyautogui.press(&#x27;enter&#x27;); pyautogui.hotkey(&#x27;ctrl&#x27;, &#x27;d&#x27;)</code></td><td><a href="libreoffice_calc/01b269ae-2111-4a07-81fd-3fcd711993b0/step_7.png"><img class="thumb" src="libreoffice_calc/01b269ae-2111-4a07-81fd-3fcd711993b0/step_7.png" loading="lazy" /></a></td></tr>
+<tr><td class="num">8</td><td>The next blank block is in column C below the existing student name at C12, so fill C12:C15 downward from its top cell.</td><td><code>pyautogui.click(120, 186); pyautogui.hotkey(&#x27;ctrl&#x27;, &#x27;a&#x27;); pyautogui.write(&#x27;C12:C15&#x27;); pyautogui.press(&#x27;enter&#x27;); pyautogui.hotkey(&#x27;ctrl&#x27;, &#x27;d&#x27;)</code></td><td><a href="libreoffice_calc/01b269ae-2111-4a07-81fd-3fcd711993b0/step_8.png"><img class="thumb" src="libreoffice_calc/01b269ae-2111-4a07-81fd-3fcd711993b0/step_8.png" loading="lazy" /></a></td></tr>
+<tr><td class="num">9</td><td>The next blank block is in column C under Olivia Calm, so fill C16:C18 downward from the existing name at C16.</td><td><code>pyautogui.click(120, 186); pyautogui.hotkey(&#x27;ctrl&#x27;, &#x27;a&#x27;); pyautogui.write(&#x27;C16:C18&#x27;); pyautogui.press(&#x27;enter&#x27;); pyautogui.hotkey(&#x27;ctrl&#x27;, &#x27;d&#x27;)</code></td><td><a href="libreoffice_calc/01b269ae-2111-4a07-81fd-3fcd711993b0/step_9.png"><img class="thumb" src="libreoffice_calc/01b269ae-2111-4a07-81fd-3fcd711993b0/step_9.png" loading="lazy" /></a></td></tr>
+<tr><td class="num">10</td><td>The next remaining blank block is in column C under Farah Salin, so fill C19:C21 downward from C19.</td><td><code>pyautogui.click(120, 186); pyautogui.hotkey(&#x27;ctrl&#x27;, &#x27;a&#x27;); pyautogui.write(&#x27;C19:C21&#x27;); pyautogui.press(&#x27;enter&#x27;); pyautogui.hotkey(&#x27;ctrl&#x27;, &#x27;d&#x27;)</code></td><td><a href="libreoffice_calc/01b269ae-2111-4a07-81fd-3fcd711993b0/step_10.png"><img class="thumb" src="libreoffice_calc/01b269ae-2111-4a07-81fd-3fcd711993b0/step_10.png" loading="lazy" /></a></td></tr>
+<tr><td class="num">11</td><td>The next remaining blank block is in column C below the existing student name at C22, so fill C22:C24 downward from its top cell.</td><td><code>pyautogui.click(120, 186); pyautogui.hotkey(&#x27;ctrl&#x27;, &#x27;a&#x27;); pyautogui.write(&#x27;C22:C24&#x27;); pyautogui.press(&#x27;enter&#x27;); pyautogui.hotkey(&#x27;ctrl&#x27;, &#x27;d&#x27;)</code></td><td><a href="libreoffice_calc/01b269ae-2111-4a07-81fd-3fcd711993b0/step_11.png"><img class="thumb" src="libreoffice_calc/01b269ae-2111-4a07-81fd-3fcd711993b0/step_11.png" loading="lazy" /></a></td></tr>
+<tr><td class="num">12</td><td>The remaining visible blank block is in column C below Tom Softy, so fill C25:C30 downward from the top populated cell at C25.</td><td><code>pyautogui.click(120, 186); pyautogui.hotkey(&#x27;ctrl&#x27;, &#x27;a&#x27;); pyautogui.write(&#x27;C25:C30&#x27;); pyautogui.press(&#x27;enter&#x27;); pyautogui.hotkey(&#x27;ctrl&#x27;, &#x27;d&#x27;)</code></td><td><a href="libreoffice_calc/01b269ae-2111-4a07-81fd-3fcd711993b0/step_12.png"><img class="thumb" src="libreoffice_calc/01b269ae-2111-4a07-81fd-3fcd711993b0/step_12.png" loading="lazy" /></a></td></tr>
+<tr><td class="num">13</td><td>The visible range B1:E30 now appears fully filled: column C has been completed through C30, and columns B, D, and E show no remaining blanks in the task region. The task appears finished.</td><td><code>DONE</code></td><td><a href="libreoffice_calc/01b269ae-2111-4a07-81fd-3fcd711993b0/step_13.png"><img class="thumb" src="libreoffice_calc/01b269ae-2111-4a07-81fd-3fcd711993b0/step_13.png" loading="lazy" /></a></td></tr></tbody></table>
+  <h3>评分方式与结果</h3>
+  <p>evaluator 保存当前表格文件，并与 gold xlsx 的 sheet_data 规则比较。score=1 表示目标表格数据与答案文件一致。</p>
+  <details><summary>原始 evaluator 配置</summary><pre>{
+  &quot;postconfig&quot;: [
+    {
+      &quot;type&quot;: &quot;activate_window&quot;,
+      &quot;parameters&quot;: {
+        &quot;window_name&quot;: &quot;Student_Level_Fill_Blank.xlsx - LibreOffice Calc&quot;,
+        &quot;strict&quot;: true
+      }
+    },
+    {
+      &quot;type&quot;: &quot;sleep&quot;,
+      &quot;parameters&quot;: {
+        &quot;seconds&quot;: 0.5
+      }
+    },
+    {
+      &quot;type&quot;: &quot;execute&quot;,
+      &quot;parameters&quot;: {
+        &quot;command&quot;: [
+          &quot;python&quot;,
+          &quot;-c&quot;,
+          &quot;import pyautogui; pyautogui.hotkey(\&quot;ctrl\&quot;, \&quot;s\&quot;);&quot;
+        ]
+      }
+    },
+    {
+      &quot;type&quot;: &quot;sleep&quot;,
+      &quot;parameters&quot;: {
+        &quot;seconds&quot;: 0.5
+      }
+    }
+  ],
+  &quot;func&quot;: &quot;compare_table&quot;,
+  &quot;expected&quot;: {
+    &quot;type&quot;: &quot;cloud_file&quot;,
+    &quot;path&quot;: &quot;https://huggingface.co/datasets/xlangai/ubuntu_osworld_file_cache/resolve/main/libreoffice_calc/01b269ae-2111-4a07-81fd-3fcd711993b0/Student_Level_Fill_Blank_gold.xlsx&quot;,
+    &quot;dest&quot;: &quot;Student_Level_Fill_Blank_gold.xlsx&quot;
+  },
+  &quot;result&quot;: {
+    &quot;type&quot;: &quot;vm_file&quot;,
+    &quot;path&quot;: &quot;/home/user/Student_Level_Fill_Blank.xlsx&quot;,
+    &quot;dest&quot;: &quot;Student_Level_Fill_Blank.xlsx&quot;
+  },
+  &quot;options&quot;: {
+    &quot;rules&quot;: [
+      {
+        &quot;type&quot;: &quot;sheet_data&quot;,
+        &quot;sheet_idx0&quot;: 0,
+        &quot;sheet_idx1&quot;: &quot;EI0&quot;
+      }
+    ]
+  }
+}</pre></details>
+  <p class="eval-line"><b>摘要：</b>func=compare_table; result.type=vm_file</p>
+</section>
+
+<section class="task" id="libreoffice_impress">
+  <h2>4. LibreOffice Impress 演示 <span class="domain">libreoffice_impress</span> <span class="badge pass">score=1</span></h2>
+  <div class="meta"><b>Task ID:</b> <code>2cd43775-7085-45d8-89fa-9e35c0a915cf</code> · <b>Steps:</b> 11 · <b>Status:</b> ok</div>
+  <h3>题目</h3>
+  <p>Enable auto-save every 3min for me, so that I don&#x27;t need to hit &quot;ctrl-s&quot; that much</p>
+  <h3>解题过程概述</h3>
+  <p>Codex 打开 LibreOffice 选项路径，进入保存设置，把自动保存间隔改为 3，并确认。</p>
+  <div class="screens"><figure><img src="libreoffice_impress/2cd43775-7085-45d8-89fa-9e35c0a915cf/step_1.png" loading="lazy"/><figcaption>Step 1 前截图</figcaption></figure><figure><img src="libreoffice_impress/2cd43775-7085-45d8-89fa-9e35c0a915cf/step_11.png" loading="lazy"/><figcaption>最后一步前截图</figcaption></figure></div>
+  <h3>逐步动作轨迹</h3>
+  <table class="steps"><thead><tr><th>Step</th><th>Codex thought</th><th>执行 action</th><th>截图</th></tr></thead><tbody><tr><td class="num">1</td><td>Open LibreOffice to access the auto-save setting in its preferences.</td><td><code>pyautogui.click(34, 335)</code></td><td><a href="libreoffice_impress/2cd43775-7085-45d8-89fa-9e35c0a915cf/step_1.png"><img class="thumb" src="libreoffice_impress/2cd43775-7085-45d8-89fa-9e35c0a915cf/step_1.png" loading="lazy" /></a></td></tr>
+<tr><td class="num">2</td><td>Open the LibreOffice settings menu to reach the autosave option.</td><td><code>pyautogui.click(488, 76)</code></td><td><a href="libreoffice_impress/2cd43775-7085-45d8-89fa-9e35c0a915cf/step_2.png"><img class="thumb" src="libreoffice_impress/2cd43775-7085-45d8-89fa-9e35c0a915cf/step_2.png" loading="lazy" /></a></td></tr>
+<tr><td class="num">3</td><td>Open LibreOffice Options from the Tools menu to reach the save settings.</td><td><code>pyautogui.click(552, 709)</code></td><td><a href="libreoffice_impress/2cd43775-7085-45d8-89fa-9e35c0a915cf/step_3.png"><img class="thumb" src="libreoffice_impress/2cd43775-7085-45d8-89fa-9e35c0a915cf/step_3.png" loading="lazy" /></a></td></tr>
+<tr><td class="num">4</td><td>Expand Load/Save in the LibreOffice Options tree to access the save settings.</td><td><code>pyautogui.click(520, 580)</code></td><td><a href="libreoffice_impress/2cd43775-7085-45d8-89fa-9e35c0a915cf/step_4.png"><img class="thumb" src="libreoffice_impress/2cd43775-7085-45d8-89fa-9e35c0a915cf/step_4.png" loading="lazy" /></a></td></tr>
+<tr><td class="num">5</td><td>Select the Load/Save General settings where the auto-save interval can be enabled and adjusted.</td><td><code>pyautogui.click(580, 603)</code></td><td><a href="libreoffice_impress/2cd43775-7085-45d8-89fa-9e35c0a915cf/step_5.png"><img class="thumb" src="libreoffice_impress/2cd43775-7085-45d8-89fa-9e35c0a915cf/step_5.png" loading="lazy" /></a></td></tr>
+<tr><td class="num">6</td><td>Enable the AutoRecovery interval control by checking the auto-save option.</td><td><code>pyautogui.click(828, 398)</code></td><td><a href="libreoffice_impress/2cd43775-7085-45d8-89fa-9e35c0a915cf/step_6.png"><img class="thumb" src="libreoffice_impress/2cd43775-7085-45d8-89fa-9e35c0a915cf/step_6.png" loading="lazy" /></a></td></tr>
+<tr><td class="num">7</td><td>The auto-save checkbox is enabled; next I need to edit the interval value from 10 to 3 minutes.</td><td><code>pyautogui.click(1118, 398)</code></td><td><a href="libreoffice_impress/2cd43775-7085-45d8-89fa-9e35c0a915cf/step_7.png"><img class="thumb" src="libreoffice_impress/2cd43775-7085-45d8-89fa-9e35c0a915cf/step_7.png" loading="lazy" /></a></td></tr>
+<tr><td class="num">8</td><td>The auto-save interval field is focused; select its current value so it can be replaced with 3.</td><td><code>pyautogui.hotkey(&#x27;ctrl&#x27;, &#x27;a&#x27;)</code></td><td><a href="libreoffice_impress/2cd43775-7085-45d8-89fa-9e35c0a915cf/step_8.png"><img class="thumb" src="libreoffice_impress/2cd43775-7085-45d8-89fa-9e35c0a915cf/step_8.png" loading="lazy" /></a></td></tr>
+<tr><td class="num">9</td><td>The auto-save interval value is selected; replace it with 3 minutes.</td><td><code>pyautogui.write(&#x27;3&#x27;)</code></td><td><a href="libreoffice_impress/2cd43775-7085-45d8-89fa-9e35c0a915cf/step_9.png"><img class="thumb" src="libreoffice_impress/2cd43775-7085-45d8-89fa-9e35c0a915cf/step_9.png" loading="lazy" /></a></td></tr>
+<tr><td class="num">10</td><td>The auto-save interval is set to 3 minutes; confirm the setting by clicking OK.</td><td><code>pyautogui.click(1407, 859)</code></td><td><a href="libreoffice_impress/2cd43775-7085-45d8-89fa-9e35c0a915cf/step_10.png"><img class="thumb" src="libreoffice_impress/2cd43775-7085-45d8-89fa-9e35c0a915cf/step_10.png" loading="lazy" /></a></td></tr>
+<tr><td class="num">11</td><td>The options dialog has been closed and LibreOffice Writer is back to the document view, indicating the auto-save interval was confirmed.</td><td><code>DONE</code></td><td><a href="libreoffice_impress/2cd43775-7085-45d8-89fa-9e35c0a915cf/step_11.png"><img class="thumb" src="libreoffice_impress/2cd43775-7085-45d8-89fa-9e35c0a915cf/step_11.png" loading="lazy" /></a></td></tr></tbody></table>
+  <h3>评分方式与结果</h3>
+  <p>evaluator 读取 LibreOffice registrymodifications.xcu，检查自动保存间隔是否为 3 分钟。score=1 表示该配置正确。</p>
+  <details><summary>原始 evaluator 配置</summary><pre>{
+  &quot;func&quot;: &quot;check_auto_saving_time&quot;,
+  &quot;result&quot;: {
+    &quot;type&quot;: &quot;vm_file&quot;,
+    &quot;path&quot;: &quot;/home/user/.config/libreoffice/4/user/registrymodifications.xcu&quot;,
+    &quot;dest&quot;: &quot;registrymodifications.xcu&quot;
+  },
+  &quot;expected&quot;: {
+    &quot;type&quot;: &quot;rule&quot;,
+    &quot;rules&quot;: {
+      &quot;minutes&quot;: 3
+    }
+  }
+}</pre></details>
+  <p class="eval-line"><b>摘要：</b>func=check_auto_saving_time; result.type=vm_file; expected={&quot;minutes&quot;: 3}</p>
+</section>
+
+<section class="task" id="libreoffice_writer">
+  <h2>5. LibreOffice Writer 文档 <span class="domain">libreoffice_writer</span> <span class="badge pass">score=1</span></h2>
+  <div class="meta"><b>Task ID:</b> <code>0e47de2a-32e0-456c-a366-8c607ef7a9d2</code> · <b>Steps:</b> 7 · <b>Status:</b> ok</div>
+  <h3>题目</h3>
+  <p>Add page number for every page at the bottom left</p>
+  <h3>解题过程概述</h3>
+  <p>Codex 通过菜单进入页脚/页码相关操作，在页面底部左侧插入页码，最后 DONE。</p>
+  <div class="screens"><figure><img src="libreoffice_writer/0e47de2a-32e0-456c-a366-8c607ef7a9d2/step_1.png" loading="lazy"/><figcaption>Step 1 前截图</figcaption></figure><figure><img src="libreoffice_writer/0e47de2a-32e0-456c-a366-8c607ef7a9d2/step_7.png" loading="lazy"/><figcaption>最后一步前截图</figcaption></figure></div>
+  <h3>逐步动作轨迹</h3>
+  <table class="steps"><thead><tr><th>Step</th><th>Codex thought</th><th>执行 action</th><th>截图</th></tr></thead><tbody><tr><td class="num">1</td><td>Open the Insert menu to access page number insertion options.</td><td><code>pyautogui.click(229, 74)</code></td><td><a href="libreoffice_writer/0e47de2a-32e0-456c-a366-8c607ef7a9d2/step_1.png"><img class="thumb" src="libreoffice_writer/0e47de2a-32e0-456c-a366-8c607ef7a9d2/step_1.png" loading="lazy" /></a></td></tr>
+<tr><td class="num">2</td><td>To place page numbers at the bottom left, first open the footer options under Insert.</td><td><code>pyautogui.click(314, 708)</code></td><td><a href="libreoffice_writer/0e47de2a-32e0-456c-a366-8c607ef7a9d2/step_2.png"><img class="thumb" src="libreoffice_writer/0e47de2a-32e0-456c-a366-8c607ef7a9d2/step_2.png" loading="lazy" /></a></td></tr>
+<tr><td class="num">3</td><td>Open the Footer submenu so the footer can be enabled for the default page style before inserting page numbers.</td><td><code>pyautogui.click(606, 735)</code></td><td><a href="libreoffice_writer/0e47de2a-32e0-456c-a366-8c607ef7a9d2/step_3.png"><img class="thumb" src="libreoffice_writer/0e47de2a-32e0-456c-a366-8c607ef7a9d2/step_3.png" loading="lazy" /></a></td></tr>
+<tr><td class="num">4</td><td>Enable the footer for the default page style so page numbers can be placed at the bottom left.</td><td><code>pyautogui.click(838, 734)</code></td><td><a href="libreoffice_writer/0e47de2a-32e0-456c-a366-8c607ef7a9d2/step_4.png"><img class="thumb" src="libreoffice_writer/0e47de2a-32e0-456c-a366-8c607ef7a9d2/step_4.png" loading="lazy" /></a></td></tr>
+<tr><td class="num">5</td><td>The footer is enabled and active; open the Insert menu to add a page number field into the footer.</td><td><code>pyautogui.click(223, 75)</code></td><td><a href="libreoffice_writer/0e47de2a-32e0-456c-a366-8c607ef7a9d2/step_5.png"><img class="thumb" src="libreoffice_writer/0e47de2a-32e0-456c-a366-8c607ef7a9d2/step_5.png" loading="lazy" /></a></td></tr>
+<tr><td class="num">6</td><td>Insert the page number field from the open Insert menu while the footer is active.</td><td><code>pyautogui.click(287, 658)</code></td><td><a href="libreoffice_writer/0e47de2a-32e0-456c-a366-8c607ef7a9d2/step_6.png"><img class="thumb" src="libreoffice_writer/0e47de2a-32e0-456c-a366-8c607ef7a9d2/step_6.png" loading="lazy" /></a></td></tr>
+<tr><td class="num">7</td><td>The footer now shows a page number field at the bottom left, which applies to all pages using this page style in LibreOffice Writer.</td><td><code>DONE</code></td><td><a href="libreoffice_writer/0e47de2a-32e0-456c-a366-8c607ef7a9d2/step_7.png"><img class="thumb" src="libreoffice_writer/0e47de2a-32e0-456c-a366-8c607ef7a9d2/step_7.png" loading="lazy" /></a></td></tr></tbody></table>
+  <h3>评分方式与结果</h3>
+  <p>evaluator 下载/读取 Writer 文档，检查 footer 是否包含页码。score=1 表示页脚页码存在并满足要求。</p>
+  <details><summary>原始 evaluator 配置</summary><pre>{
+  &quot;postconfig&quot;: [
+    {
+      &quot;type&quot;: &quot;activate_window&quot;,
+      &quot;parameters&quot;: {
+        &quot;window_name&quot;: &quot;LibreOffice_Open_Source_Word_Processing.docx - LibreOffice Writer&quot;,
+        &quot;strict&quot;: true
+      }
+    },
+    {
+      &quot;type&quot;: &quot;sleep&quot;,
+      &quot;parameters&quot;: {
+        &quot;seconds&quot;: 0.5
+      }
+    },
+    {
+      &quot;type&quot;: &quot;execute&quot;,
+      &quot;parameters&quot;: {
+        &quot;command&quot;: [
+          &quot;python&quot;,
+          &quot;-c&quot;,
+          &quot;import pyautogui; import time; pyautogui.hotkey(&#x27;ctrl&#x27;, &#x27;s&#x27;); time.sleep(0.5); &quot;
+        ]
+      }
+    }
+  ],
+  &quot;func&quot;: &quot;has_page_numbers_in_footers&quot;,
+  &quot;result&quot;: {
+    &quot;type&quot;: &quot;vm_file&quot;,
+    &quot;path&quot;: &quot;/home/user/Desktop/LibreOffice_Open_Source_Word_Processing.docx&quot;,
+    &quot;dest&quot;: &quot;LibreOffice_Open_Source_Word_Processing.docx&quot;
+  }
+}</pre></details>
+  <p class="eval-line"><b>摘要：</b>func=has_page_numbers_in_footers; result.type=vm_file</p>
+</section>
+
+<section class="task" id="multi_apps">
+  <h2>6. 跨应用 / 系统默认应用 <span class="domain">multi_apps</span> <span class="badge fail">score=0</span></h2>
+  <div class="meta"><b>Task ID:</b> <code>937087b6-f668-4ba6-9110-60682ee33441</code> · <b>Steps:</b> 10 · <b>Status:</b> ok</div>
+  <h3>题目</h3>
+  <p>I am currently using a ubuntu system. Could you help me set the default video player as VLC?</p>
+  <h3>解题过程概述</h3>
+  <p>Codex 打开 Settings 并搜索默认应用/视频应用设置，尝试把视频播放器改为 VLC；但 evaluator 最终未看到 vlc.desktop 成为默认值。</p>
+  <div class="screens"><figure><img src="multi_apps/937087b6-f668-4ba6-9110-60682ee33441/step_1.png" loading="lazy"/><figcaption>Step 1 前截图</figcaption></figure><figure><img src="multi_apps/937087b6-f668-4ba6-9110-60682ee33441/step_10.png" loading="lazy"/><figcaption>最后一步前截图</figcaption></figure></div>
+  <h3>逐步动作轨迹</h3>
+  <table class="steps"><thead><tr><th>Step</th><th>Codex thought</th><th>执行 action</th><th>截图</th></tr></thead><tbody><tr><td class="num">1</td><td>Open the application overview so I can launch Settings and change the default app for videos.</td><td><code>pyautogui.click(51, 13)</code></td><td><a href="multi_apps/937087b6-f668-4ba6-9110-60682ee33441/step_1.png"><img class="thumb" src="multi_apps/937087b6-f668-4ba6-9110-60682ee33441/step_1.png" loading="lazy" /></a></td></tr>
+<tr><td class="num">2</td><td>The Activities overview is open. I should focus the search box so I can search for Settings and open it next.</td><td><code>pyautogui.click(975, 70)</code></td><td><a href="multi_apps/937087b6-f668-4ba6-9110-60682ee33441/step_2.png"><img class="thumb" src="multi_apps/937087b6-f668-4ba6-9110-60682ee33441/step_2.png" loading="lazy" /></a></td></tr>
+<tr><td class="num">3</td><td>The search box is focused in the Activities overview, so the next step is to search for Settings.</td><td><code>pyautogui.write(&#x27;settings&#x27;)</code></td><td><a href="multi_apps/937087b6-f668-4ba6-9110-60682ee33441/step_3.png"><img class="thumb" src="multi_apps/937087b6-f668-4ba6-9110-60682ee33441/step_3.png" loading="lazy" /></a></td></tr>
+<tr><td class="num">4</td><td>The Settings app is visible in the search results, so the next step is to open it.</td><td><code>pyautogui.click(904, 175)</code></td><td><a href="multi_apps/937087b6-f668-4ba6-9110-60682ee33441/step_4.png"><img class="thumb" src="multi_apps/937087b6-f668-4ba6-9110-60682ee33441/step_4.png" loading="lazy" /></a></td></tr>
+<tr><td class="num">5</td><td>Settings is open on Displays. To change the default video player, the next step is to open the Applications section in the sidebar.</td><td><code>pyautogui.click(617, 528)</code></td><td><a href="multi_apps/937087b6-f668-4ba6-9110-60682ee33441/step_5.png"><img class="thumb" src="multi_apps/937087b6-f668-4ba6-9110-60682ee33441/step_5.png" loading="lazy" /></a></td></tr>
+<tr><td class="num">6</td><td>The Applications list is open. The quickest next step is to focus its search box so VLC can be found and selected.</td><td><code>pyautogui.click(618, 219)</code></td><td><a href="multi_apps/937087b6-f668-4ba6-9110-60682ee33441/step_6.png"><img class="thumb" src="multi_apps/937087b6-f668-4ba6-9110-60682ee33441/step_6.png" loading="lazy" /></a></td></tr>
+<tr><td class="num">7</td><td>The Applications search box is focused. The next step is to search for VLC so its application settings can be opened.</td><td><code>pyautogui.write(&#x27;vlc&#x27;)</code></td><td><a href="multi_apps/937087b6-f668-4ba6-9110-60682ee33441/step_7.png"><img class="thumb" src="multi_apps/937087b6-f668-4ba6-9110-60682ee33441/step_7.png" loading="lazy" /></a></td></tr>
+<tr><td class="num">8</td><td>The VLC search result is visible but not selected yet; the next step is to open VLC media player&#x27;s application settings.</td><td><code>pyautogui.click(627, 262)</code></td><td><a href="multi_apps/937087b6-f668-4ba6-9110-60682ee33441/step_8.png"><img class="thumb" src="multi_apps/937087b6-f668-4ba6-9110-60682ee33441/step_8.png" loading="lazy" /></a></td></tr>
+<tr><td class="num">9</td><td>VLC&#x27;s application settings are open; the next step is to open its Video Files handler list so VLC can be set as the default for video types.</td><td><code>pyautogui.click(1114, 475)</code></td><td><a href="multi_apps/937087b6-f668-4ba6-9110-60682ee33441/step_9.png"><img class="thumb" src="multi_apps/937087b6-f668-4ba6-9110-60682ee33441/step_9.png" loading="lazy" /></a></td></tr>
+<tr><td class="num">10</td><td>The VLC application settings show Video Files assigned with multiple handlers and each entry offers an &#x27;Unset&#x27; button, indicating VLC is already the default video player.</td><td><code>DONE</code></td><td><a href="multi_apps/937087b6-f668-4ba6-9110-60682ee33441/step_10.png"><img class="thumb" src="multi_apps/937087b6-f668-4ba6-9110-60682ee33441/step_10.png" loading="lazy" /></a></td></tr></tbody></table>
+  <h3>评分方式与结果</h3>
+  <p>evaluator 查询默认视频播放器，要求结果包含 vlc.desktop。score=0 表示最终默认视频播放器未满足该条件。</p>
+  <details><summary>原始 evaluator 配置</summary><pre>{
+  &quot;func&quot;: &quot;check_include_exclude&quot;,
+  &quot;result&quot;: {
+    &quot;type&quot;: &quot;default_video_player&quot;
+  },
+  &quot;expected&quot;: {
+    &quot;type&quot;: &quot;rule&quot;,
+    &quot;rules&quot;: {
+      &quot;include&quot;: [
+        &quot;vlc.desktop&quot;
+      ]
+    }
+  }
+}</pre></details>
+  <p class="eval-line"><b>摘要：</b>func=check_include_exclude; result.type=default_video_player; expected={&quot;include&quot;: [&quot;vlc.desktop&quot;]}</p>
+</section>
+
+<section class="task" id="os">
+  <h2>7. Ubuntu 系统设置 <span class="domain">os</span> <span class="badge pass">score=1</span></h2>
+  <div class="meta"><b>Task ID:</b> <code>28cc3b7e-b194-4bc9-8353-d04c0f4d56d2</code> · <b>Steps:</b> 3 · <b>Status:</b> ok</div>
+  <h3>题目</h3>
+  <p>The volume of my system is too small. Can you help me turn up to the max volume?</p>
+  <h3>解题过程概述</h3>
+  <p>Codex 打开右上角系统菜单，将音量滑块拖到最右侧，evaluator 读取到 100%。</p>
+  <div class="screens"><figure><img src="os/28cc3b7e-b194-4bc9-8353-d04c0f4d56d2/step_1.png" loading="lazy"/><figcaption>Step 1 前截图</figcaption></figure><figure><img src="os/28cc3b7e-b194-4bc9-8353-d04c0f4d56d2/step_3.png" loading="lazy"/><figcaption>最后一步前截图</figcaption></figure></div>
+  <h3>逐步动作轨迹</h3>
+  <table class="steps"><thead><tr><th>Step</th><th>Codex thought</th><th>执行 action</th><th>截图</th></tr></thead><tbody><tr><td class="num">1</td><td>Open the system volume menu from the top bar speaker icon.</td><td><code>pyautogui.click(1868, 14)</code></td><td><a href="os/28cc3b7e-b194-4bc9-8353-d04c0f4d56d2/step_1.png"><img class="thumb" src="os/28cc3b7e-b194-4bc9-8353-d04c0f4d56d2/step_1.png" loading="lazy" /></a></td></tr>
+<tr><td class="num">2</td><td>The volume menu is open and the slider is visible; move the slider knob to the far right to maximize volume.</td><td><code>pyautogui.moveTo(1885, 58); pyautogui.dragTo(1893, 58, duration=0.2, button=&#x27;left&#x27;)</code></td><td><a href="os/28cc3b7e-b194-4bc9-8353-d04c0f4d56d2/step_2.png"><img class="thumb" src="os/28cc3b7e-b194-4bc9-8353-d04c0f4d56d2/step_2.png" loading="lazy" /></a></td></tr>
+<tr><td class="num">3</td><td>The volume slider knob is already at the far right, indicating maximum volume, so the task appears complete.</td><td><code>DONE</code></td><td><a href="os/28cc3b7e-b194-4bc9-8353-d04c0f4d56d2/step_3.png"><img class="thumb" src="os/28cc3b7e-b194-4bc9-8353-d04c0f4d56d2/step_3.png" loading="lazy" /></a></td></tr></tbody></table>
+  <h3>评分方式与结果</h3>
+  <p>evaluator 在 VM 内执行 pactl 命令读取音量百分比，要求精确等于 100。score=1 表示最终音量为 100%。</p>
+  <details><summary>原始 evaluator 配置</summary><pre>{
+  &quot;func&quot;: &quot;exact_match&quot;,
+  &quot;result&quot;: {
+    &quot;type&quot;: &quot;vm_command_line&quot;,
+    &quot;command&quot;: &quot;pulseaudio --start\npactl list sinks | grep &#x27;^[[:space:]]Volume:&#x27; | head -n 1 | awk &#x27;{print $5}&#x27; | sed &#x27;s/%//g&#x27;&quot;,
+    &quot;shell&quot;: true
+  },
+  &quot;expected&quot;: {
+    &quot;type&quot;: &quot;rule&quot;,
+    &quot;rules&quot;: {
+      &quot;expected&quot;: &quot;100\n&quot;
+    }
+  }
+}</pre></details>
+  <p class="eval-line"><b>摘要：</b>func=exact_match; result.type=vm_command_line; expected={&quot;expected&quot;: &quot;100\n&quot;}</p>
+</section>
+
+<section class="task" id="thunderbird">
+  <h2>8. Thunderbird 邮件客户端 <span class="domain">thunderbird</span> <span class="badge pass">score=1</span></h2>
+  <div class="meta"><b>Task ID:</b> <code>a10b69e1-6034-4a2b-93e1-571d45194f75</code> · <b>Steps:</b> 10 · <b>Status:</b> ok</div>
+  <h3>题目</h3>
+  <p>Create two local folders in Thunderbird for me: COMPANY and UNIVERSITY.</p>
+  <h3>解题过程概述</h3>
+  <p>Codex 在 Thunderbird Local Folders 上右键新建文件夹，分别创建 COMPANY 和 UNIVERSITY。</p>
+  <div class="screens"><figure><img src="thunderbird/a10b69e1-6034-4a2b-93e1-571d45194f75/step_1.png" loading="lazy"/><figcaption>Step 1 前截图</figcaption></figure><figure><img src="thunderbird/a10b69e1-6034-4a2b-93e1-571d45194f75/step_10.png" loading="lazy"/><figcaption>最后一步前截图</figcaption></figure></div>
+  <h3>逐步动作轨迹</h3>
+  <table class="steps"><thead><tr><th>Step</th><th>Codex thought</th><th>执行 action</th><th>截图</th></tr></thead><tbody><tr><td class="num">1</td><td>Open Thunderbird from the dock to start creating the local folders.</td><td><code>import pyautogui; pyautogui.click(34, 133)</code></td><td><a href="thunderbird/a10b69e1-6034-4a2b-93e1-571d45194f75/step_1.png"><img class="thumb" src="thunderbird/a10b69e1-6034-4a2b-93e1-571d45194f75/step_1.png" loading="lazy" /></a></td></tr>
+<tr><td class="num">2</td><td>Open the context menu for the Local Folders account so I can create the requested folders there.</td><td><code>import pyautogui; pyautogui.click(222, 431, button=&#x27;right&#x27;)</code></td><td><a href="thunderbird/a10b69e1-6034-4a2b-93e1-571d45194f75/step_2.png"><img class="thumb" src="thunderbird/a10b69e1-6034-4a2b-93e1-571d45194f75/step_2.png" loading="lazy" /></a></td></tr>
+<tr><td class="num">3</td><td>The context menu for Local Folders is open, and the next step is to open the new-folder dialog.</td><td><code>import pyautogui; pyautogui.click(305, 534)</code></td><td><a href="thunderbird/a10b69e1-6034-4a2b-93e1-571d45194f75/step_3.png"><img class="thumb" src="thunderbird/a10b69e1-6034-4a2b-93e1-571d45194f75/step_3.png" loading="lazy" /></a></td></tr>
+<tr><td class="num">4</td><td>The New Folder dialog is open with the Name field focused, so the next step is to enter the first folder name: COMPANY.</td><td><code>import pyautogui; pyautogui.write(&#x27;COMPANY&#x27;)</code></td><td><a href="thunderbird/a10b69e1-6034-4a2b-93e1-571d45194f75/step_4.png"><img class="thumb" src="thunderbird/a10b69e1-6034-4a2b-93e1-571d45194f75/step_4.png" loading="lazy" /></a></td></tr>
+<tr><td class="num">5</td><td>The first folder name is entered in the New Folder dialog, so the next step is to create the COMPANY folder by clicking the Create Folder button.</td><td><code>pyautogui.click(1047, 638)</code></td><td><a href="thunderbird/a10b69e1-6034-4a2b-93e1-571d45194f75/step_5.png"><img class="thumb" src="thunderbird/a10b69e1-6034-4a2b-93e1-571d45194f75/step_5.png" loading="lazy" /></a></td></tr>
+<tr><td class="num">6</td><td>The COMPANY folder is now visible under Local Folders, so the next step is to open the Local Folders context menu again to create the second folder, UNIVERSITY.</td><td><code>import pyautogui; pyautogui.click(222, 431, button=&#x27;right&#x27;)</code></td><td><a href="thunderbird/a10b69e1-6034-4a2b-93e1-571d45194f75/step_6.png"><img class="thumb" src="thunderbird/a10b69e1-6034-4a2b-93e1-571d45194f75/step_6.png" loading="lazy" /></a></td></tr>
+<tr><td class="num">7</td><td>The Local Folders context menu is open again, so the next step is to open the New Folder dialog for the second folder.</td><td><code>import pyautogui; pyautogui.click(307, 535)</code></td><td><a href="thunderbird/a10b69e1-6034-4a2b-93e1-571d45194f75/step_7.png"><img class="thumb" src="thunderbird/a10b69e1-6034-4a2b-93e1-571d45194f75/step_7.png" loading="lazy" /></a></td></tr>
+<tr><td class="num">8</td><td>The New Folder dialog is open with the Name field focused, so the next step is to enter the second folder name: UNIVERSITY.</td><td><code>import pyautogui; pyautogui.write(&#x27;UNIVERSITY&#x27;)</code></td><td><a href="thunderbird/a10b69e1-6034-4a2b-93e1-571d45194f75/step_8.png"><img class="thumb" src="thunderbird/a10b69e1-6034-4a2b-93e1-571d45194f75/step_8.png" loading="lazy" /></a></td></tr>
+<tr><td class="num">9</td><td>The second folder name is entered in the New Folder dialog, so the next step is to create the UNIVERSITY folder by clicking the Create Folder button.</td><td><code>pyautogui.click(1045, 637)</code></td><td><a href="thunderbird/a10b69e1-6034-4a2b-93e1-571d45194f75/step_9.png"><img class="thumb" src="thunderbird/a10b69e1-6034-4a2b-93e1-571d45194f75/step_9.png" loading="lazy" /></a></td></tr>
+<tr><td class="num">10</td><td>Both local folders, COMPANY and UNIVERSITY, are visible under Local Folders in Thunderbird, so the task is complete.</td><td><code>DONE</code></td><td><a href="thunderbird/a10b69e1-6034-4a2b-93e1-571d45194f75/step_10.png"><img class="thumb" src="thunderbird/a10b69e1-6034-4a2b-93e1-571d45194f75/step_10.png" loading="lazy" /></a></td></tr></tbody></table>
+  <h3>评分方式与结果</h3>
+  <p>evaluator 列出 Thunderbird Local Folders 目录，要求 COMPANY 和 UNIVERSITY 的目录及 .msf 索引都存在。score=1 表示两个本地文件夹创建成功。</p>
+  <details><summary>原始 evaluator 配置</summary><pre>{
+  &quot;postconfig&quot;: [
+    {
+      &quot;type&quot;: &quot;execute&quot;,
+      &quot;parameters&quot;: {
+        &quot;command&quot;: [
+          &quot;ls&quot;,
+          &quot;-R&quot;,
+          &quot;/home/user/.thunderbird/t5q2a5hp.default-release/Mail/Local Folders&quot;
+        ],
+        &quot;stdout&quot;: &quot;thunder-local-folder.ls&quot;
+      }
+    }
+  ],
+  &quot;func&quot;: &quot;check_list&quot;,
+  &quot;result&quot;: {
+    &quot;type&quot;: &quot;cache_file&quot;,
+    &quot;path&quot;: &quot;thunder-local-folder.ls&quot;
+  },
+  &quot;expected&quot;: {
+    &quot;type&quot;: &quot;rule&quot;,
+    &quot;rules&quot;: {
+      &quot;expect&quot;: [
+        &quot;\\bCOMPANY\\.msf\\b&quot;,
+        &quot;\\bCOMPANY/?(?!\\.msf)&quot;,
+        &quot;\\bUNIVERSITY\\.msf\\b&quot;,
+        &quot;\\bUNIVERSITY/?(?!\\.msf)&quot;
+      ]
+    }
+  }
+}</pre></details>
+  <p class="eval-line"><b>摘要：</b>func=check_list; result.type=cache_file; expected={&quot;expect&quot;: [&quot;\\bCOMPANY\\.msf\\b&quot;, &quot;\\bCOMPANY/?(?!\\.msf)&quot;, &quot;\\bUNIVERSITY\\.msf\\b&quot;, &quot;\\bUNIVERSITY/?(?!\\.msf)&quot;]}</p>
+</section>
+
+<section class="task" id="vlc">
+  <h2>9. VLC 播放器 <span class="domain">vlc</span> <span class="badge fail">score=0</span></h2>
+  <div class="meta"><b>Task ID:</b> <code>215dfd39-f493-4bc3-a027-8a97d72c61bf</code> · <b>Steps:</b> 15 · <b>Status:</b> ok</div>
+  <h3>题目</h3>
+  <p>Can you disable the cone icon in the splash screen? I am tired of its skeuomorphic design.</p>
+  <h3>解题过程概述</h3>
+  <p>Codex 打开 VLC 偏好设置并搜索 splash/cone/background 相关项，尝试切换选项；但最终 vlcrc 中 qt-bgcone 未达到 0。</p>
+  <div class="screens"><figure><img src="vlc/215dfd39-f493-4bc3-a027-8a97d72c61bf/step_1.png" loading="lazy"/><figcaption>Step 1 前截图</figcaption></figure><figure><img src="vlc/215dfd39-f493-4bc3-a027-8a97d72c61bf/step_15.png" loading="lazy"/><figcaption>最后一步前截图</figcaption></figure></div>
+  <h3>逐步动作轨迹</h3>
+  <table class="steps"><thead><tr><th>Step</th><th>Codex thought</th><th>执行 action</th><th>截图</th></tr></thead><tbody><tr><td class="num">1</td><td>Open VLC settings to disable the splash screen option.</td><td><code>pyautogui.click(883, 254)</code></td><td><a href="vlc/215dfd39-f493-4bc3-a027-8a97d72c61bf/step_1.png"><img class="thumb" src="vlc/215dfd39-f493-4bc3-a027-8a97d72c61bf/step_1.png" loading="lazy" /></a></td></tr>
+<tr><td class="num">2</td><td>Open VLC Preferences from the Tools menu to find the splash screen setting.</td><td><code>pyautogui.click(938, 485)</code></td><td><a href="vlc/215dfd39-f493-4bc3-a027-8a97d72c61bf/step_2.png"><img class="thumb" src="vlc/215dfd39-f493-4bc3-a027-8a97d72c61bf/step_2.png" loading="lazy" /></a></td></tr>
+<tr><td class="num">3</td><td>The splash screen cone setting is likely in advanced preferences rather than the simple interface view, so switch to All settings first.</td><td><code>pyautogui.click(579, 778)</code></td><td><a href="vlc/215dfd39-f493-4bc3-a027-8a97d72c61bf/step_3.png"><img class="thumb" src="vlc/215dfd39-f493-4bc3-a027-8a97d72c61bf/step_3.png" loading="lazy" /></a></td></tr>
+<tr><td class="num">4</td><td>Searching for the splash-screen setting is the quickest way to find the option that controls VLC&#x27;s cone logo.</td><td><code>pyautogui.click(656, 132)</code></td><td><a href="vlc/215dfd39-f493-4bc3-a027-8a97d72c61bf/step_4.png"><img class="thumb" src="vlc/215dfd39-f493-4bc3-a027-8a97d72c61bf/step_4.png" loading="lazy" /></a></td></tr>
+<tr><td class="num">5</td><td>The search field is focused, so the next step is to search for the splash-screen setting directly.</td><td><code>pyautogui.write(&#x27;splash&#x27;)</code></td><td><a href="vlc/215dfd39-f493-4bc3-a027-8a97d72c61bf/step_5.png"><img class="thumb" src="vlc/215dfd39-f493-4bc3-a027-8a97d72c61bf/step_5.png" loading="lazy" /></a></td></tr>
+<tr><td class="num">6</td><td>The current search returned no matches, so search for the cone-related setting instead.</td><td><code>pyautogui.hotkey(&#x27;ctrl&#x27;, &#x27;a&#x27;); pyautogui.write(&#x27;cone&#x27;)</code></td><td><a href="vlc/215dfd39-f493-4bc3-a027-8a97d72c61bf/step_6.png"><img class="thumb" src="vlc/215dfd39-f493-4bc3-a027-8a97d72c61bf/step_6.png" loading="lazy" /></a></td></tr>
+<tr><td class="num">7</td><td>The search landed on the Qt interface settings, and the cone-related option is likely further down this preferences page, so the next step is to scroll within the settings pane.</td><td><code>pyautogui.scroll(-659, x=1246, y=446)</code></td><td><a href="vlc/215dfd39-f493-4bc3-a027-8a97d72c61bf/step_7.png"><img class="thumb" src="vlc/215dfd39-f493-4bc3-a027-8a97d72c61bf/step_7.png" loading="lazy" /></a></td></tr>
+<tr><td class="num">8</td><td>The current Qt settings page likely contains the cone-related option further down, so continue scrolling within the settings pane to reveal additional matching settings.</td><td><code>pyautogui.scroll(-675, x=1244, y=448)</code></td><td><a href="vlc/215dfd39-f493-4bc3-a027-8a97d72c61bf/step_8.png"><img class="thumb" src="vlc/215dfd39-f493-4bc3-a027-8a97d72c61bf/step_8.png" loading="lazy" /></a></td></tr>
+<tr><td class="num">9</td><td>The advanced search path is not exposing the splash option; switching to Simple preferences is the quickest way to reach the likely &#x27;Show splash screen&#x27; checkbox.</td><td><code>pyautogui.click(510, 778)</code></td><td><a href="vlc/215dfd39-f493-4bc3-a027-8a97d72c61bf/step_9.png"><img class="thumb" src="vlc/215dfd39-f493-4bc3-a027-8a97d72c61bf/step_9.png" loading="lazy" /></a></td></tr>
+<tr><td class="num">10</td><td>The Simple Interface preferences likely contain a &#x27;Show splash screen&#x27; checkbox further down, so the next step is to scroll lower in the settings pane.</td><td><code>pyautogui.scroll(-612, x=1244, y=447)</code></td><td><a href="vlc/215dfd39-f493-4bc3-a027-8a97d72c61bf/step_10.png"><img class="thumb" src="vlc/215dfd39-f493-4bc3-a027-8a97d72c61bf/step_10.png" loading="lazy" /></a></td></tr>
+<tr><td class="num">11</td><td>The current lower portion of Interface settings does not show the splash option; it is likely higher up on this page, so scroll back up within the preferences pane.</td><td><code>pyautogui.scroll(664, x=1248, y=448)</code></td><td><a href="vlc/215dfd39-f493-4bc3-a027-8a97d72c61bf/step_11.png"><img class="thumb" src="vlc/215dfd39-f493-4bc3-a027-8a97d72c61bf/step_11.png" loading="lazy" /></a></td></tr>
+<tr><td class="num">12</td><td>The simple Interface page does not show a splash-screen option; switching back to advanced settings is the best next step to reach the Qt/interface toggle for the startup cone.</td><td><code>pyautogui.click(578, 779)</code></td><td><a href="vlc/215dfd39-f493-4bc3-a027-8a97d72c61bf/step_12.png"><img class="thumb" src="vlc/215dfd39-f493-4bc3-a027-8a97d72c61bf/step_12.png" loading="lazy" /></a></td></tr>
+<tr><td class="num">13</td><td>The current `cone` search is not exposing the needed option, so switch the preferences search to `splash` to find the splash-screen setting directly.</td><td><code>pyautogui.click(620, 133); pyautogui.hotkey(&#x27;ctrl&#x27;, &#x27;a&#x27;); pyautogui.write(&#x27;splash&#x27;)</code></td><td><a href="vlc/215dfd39-f493-4bc3-a027-8a97d72c61bf/step_13.png"><img class="thumb" src="vlc/215dfd39-f493-4bc3-a027-8a97d72c61bf/step_13.png" loading="lazy" /></a></td></tr>
+<tr><td class="num">14</td><td>The current search term has no matches; the VLC startup cone setting is more likely labeled as a background/cone display option, so search for `background` next.</td><td><code>pyautogui.click(620, 133); pyautogui.hotkey(&#x27;ctrl&#x27;, &#x27;a&#x27;); pyautogui.write(&#x27;background&#x27;)</code></td><td><a href="vlc/215dfd39-f493-4bc3-a027-8a97d72c61bf/step_14.png"><img class="thumb" src="vlc/215dfd39-f493-4bc3-a027-8a97d72c61bf/step_14.png" loading="lazy" /></a></td></tr>
+<tr><td class="num">15</td><td>The search results include the `Qt` interface section, which likely contains the background cone setting; select it to reveal the relevant checkbox.</td><td><code>pyautogui.click(575, 245)</code></td><td><a href="vlc/215dfd39-f493-4bc3-a027-8a97d72c61bf/step_15.png"><img class="thumb" src="vlc/215dfd39-f493-4bc3-a027-8a97d72c61bf/step_15.png" loading="lazy" /></a></td></tr></tbody></table>
+  <h3>评分方式与结果</h3>
+  <p>evaluator 读取 VLC 配置 vlcrc，要求 qt-bgcone=0，即禁用 splash cone 背景。score=0 表示该配置没有满足预期。</p>
+  <details><summary>原始 evaluator 配置</summary><pre>{
+  &quot;postconfig&quot;: [
+    {
+      &quot;type&quot;: &quot;launch&quot;,
+      &quot;parameters&quot;: {
+        &quot;command&quot;: [
+          &quot;pkill&quot;,
+          &quot;vlc&quot;
+        ]
+      }
+    },
+    {
+      &quot;type&quot;: &quot;launch&quot;,
+      &quot;parameters&quot;: {
+        &quot;command&quot;: &quot;vlc --no-audio --no-video-title-show&quot;,
+        &quot;shell&quot;: true
+      }
+    }
+  ],
+  &quot;func&quot;: &quot;check_qt_bgcone&quot;,
+  &quot;expected&quot;: {
+    &quot;type&quot;: &quot;rule&quot;,
+    &quot;rules&quot;: {
+      &quot;expected_qt_bgcone&quot;: 0
+    }
+  },
+  &quot;result&quot;: {
+    &quot;type&quot;: &quot;vlc_config&quot;,
+    &quot;dest&quot;: &quot;vlcrc&quot;
+  }
+}</pre></details>
+  <p class="eval-line"><b>摘要：</b>func=check_qt_bgcone; result.type=vlc_config; expected={&quot;expected_qt_bgcone&quot;: 0}</p>
+</section>
+
+<section class="task" id="vs_code">
+  <h2>10. VS Code 编辑器 <span class="domain">vs_code</span> <span class="badge pass">score=1</span></h2>
+  <div class="meta"><b>Task ID:</b> <code>57242fad-77ca-454f-b71b-f187181a9f23</code> · <b>Steps:</b> 7 · <b>Status:</b> ok</div>
+  <h3>题目</h3>
+  <p>Please help me create a new python file named &quot;test.py&quot; via VS Code and save it at &quot;/home/user/Desktop&quot;.</p>
+  <h3>解题过程概述</h3>
+  <p>Codex 在 VS Code 中创建 /home/user/Desktop/test.py，保存后 DONE；evaluator 在桌面目录看到 test.py。</p>
+  <div class="screens"><figure><img src="vs_code/57242fad-77ca-454f-b71b-f187181a9f23/step_1.png" loading="lazy"/><figcaption>Step 1 前截图</figcaption></figure><figure><img src="vs_code/57242fad-77ca-454f-b71b-f187181a9f23/step_7.png" loading="lazy"/><figcaption>最后一步前截图</figcaption></figure></div>
+  <h3>逐步动作轨迹</h3>
+  <table class="steps"><thead><tr><th>Step</th><th>Codex thought</th><th>执行 action</th><th>截图</th></tr></thead><tbody><tr><td class="num">1</td><td>Open VS Code from the left dock to start creating the file.</td><td><code>pyautogui.click(35, 200)</code></td><td><a href="vs_code/57242fad-77ca-454f-b71b-f187181a9f23/step_1.png"><img class="thumb" src="vs_code/57242fad-77ca-454f-b71b-f187181a9f23/step_1.png" loading="lazy" /></a></td></tr>
+<tr><td class="num">2</td><td>Create a new untitled file from the VS Code welcome page before saving it as /home/user/Desktop/test.py.</td><td><code>pyautogui.click(686, 409)</code></td><td><a href="vs_code/57242fad-77ca-454f-b71b-f187181a9f23/step_2.png"><img class="thumb" src="vs_code/57242fad-77ca-454f-b71b-f187181a9f23/step_2.png" loading="lazy" /></a></td></tr>
+<tr><td class="num">3</td><td>Enter the target file path in the focused New File input so VS Code creates the Python file on the Desktop.</td><td><code>pyautogui.write(&#x27;/home/user/Desktop/test.py&#x27;)</code></td><td><a href="vs_code/57242fad-77ca-454f-b71b-f187181a9f23/step_3.png"><img class="thumb" src="vs_code/57242fad-77ca-454f-b71b-f187181a9f23/step_3.png" loading="lazy" /></a></td></tr>
+<tr><td class="num">4</td><td>The target path is entered and the &#x27;Create New File&#x27; option is selected, so confirm it to create the file at /home/user/Desktop/test.py.</td><td><code>pyautogui.press(&#x27;enter&#x27;)</code></td><td><a href="vs_code/57242fad-77ca-454f-b71b-f187181a9f23/step_4.png"><img class="thumb" src="vs_code/57242fad-77ca-454f-b71b-f187181a9f23/step_4.png" loading="lazy" /></a></td></tr>
+<tr><td class="num">5</td><td>The save dialog is open with the filename set, and the current folder is /home/user, so the next step is to switch the destination to Desktop.</td><td><code>pyautogui.click(650, 500)</code></td><td><a href="vs_code/57242fad-77ca-454f-b71b-f187181a9f23/step_5.png"><img class="thumb" src="vs_code/57242fad-77ca-454f-b71b-f187181a9f23/step_5.png" loading="lazy" /></a></td></tr>
+<tr><td class="num">6</td><td>The save dialog is already set to the Desktop with the filename `test.py`, so the next step is to confirm by clicking Save.</td><td><code>pyautogui.click(1376, 413)</code></td><td><a href="vs_code/57242fad-77ca-454f-b71b-f187181a9f23/step_6.png"><img class="thumb" src="vs_code/57242fad-77ca-454f-b71b-f187181a9f23/step_6.png" loading="lazy" /></a></td></tr>
+<tr><td class="num">7</td><td>The file `test.py` is open in VS Code and the breadcrumb shows it is saved at `/home/user/Desktop/test.py`, so the task is complete.</td><td><code>DONE</code></td><td><a href="vs_code/57242fad-77ca-454f-b71b-f187181a9f23/step_7.png"><img class="thumb" src="vs_code/57242fad-77ca-454f-b71b-f187181a9f23/step_7.png" loading="lazy" /></a></td></tr></tbody></table>
+  <h3>评分方式与结果</h3>
+  <p>evaluator 在 /home/user/Desktop 查询 test.py，要求输出包含 test.py。score=1 表示桌面上存在 test.py。</p>
+  <details><summary>原始 evaluator 配置</summary><pre>{
+  &quot;func&quot;: &quot;is_extension_installed&quot;,
+  &quot;result&quot;: {
+    &quot;type&quot;: &quot;vm_command_line&quot;,
+    &quot;command&quot;: [
+      &quot;ls&quot;,
+      &quot;/home/user/Desktop&quot;,
+      &quot;|&quot;,
+      &quot;grep&quot;,
+      &quot;test.py&quot;
+    ]
+  },
+  &quot;expected&quot;: {
+    &quot;type&quot;: &quot;rule&quot;,
+    &quot;rules&quot;: {
+      &quot;type&quot;: &quot;contain&quot;,
+      &quot;expected&quot;: &quot;test.py&quot;
+    }
+  }
+}</pre></details>
+  <p class="eval-line"><b>摘要：</b>func=is_extension_installed; result.type=vm_command_line; expected={&quot;type&quot;: &quot;contain&quot;, &quot;expected&quot;: &quot;test.py&quot;}</p>
+</section>
+
+</body>
+</html>
