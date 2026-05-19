@@ -259,6 +259,7 @@ def main() -> int:
             stale_paths = [
                 task_dir / "traj.jsonl",
                 task_dir / "result.txt",
+                task_dir / "final.png",
                 *task_dir.glob("step_*.png"),
             ]
             for stale_path in stale_paths:
@@ -296,17 +297,16 @@ def main() -> int:
                             next_observation, _, _, _ = env.step(action, pause=0.5)
                         else:
                             next_observation, _, _, _ = env.step(action, pause=1.0)
-                        after_screenshot_path = task_dir / f"step_{step_index:03d}_after.png"
-                        save_observation_screenshot(
-                            next_observation,
-                            after_screenshot_path,
-                            f"step {step_index} after action",
-                        )
+                        if action in {"DONE", "FAIL"} or step_index == args.max_steps:
+                            save_observation_screenshot(
+                                next_observation,
+                                task_dir / "final.png",
+                                "final state",
+                            )
                         history.append(
                             {
                                 "step": step_index,
                                 "before_screenshot": before_screenshot_path.name,
-                                "after_screenshot": after_screenshot_path.name,
                                 **response,
                             }
                         )

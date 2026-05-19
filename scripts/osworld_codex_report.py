@@ -62,7 +62,10 @@ def find_after_image(task_dir: Path, step: int) -> Path | None:
     candidates = [
         task_dir / f"step_{step:03d}_after.png",
         task_dir / f"step_{step}_after.png",
+        task_dir / f"step_{step + 1:03d}_before.png",
+        task_dir / f"step_{step + 1}_before.png",
         task_dir / f"step_{step + 1}.png",
+        task_dir / "final.png",
     ]
     return next((candidate for candidate in candidates if candidate.exists()), None)
 
@@ -231,7 +234,7 @@ figcaption {{ color:var(--muted); font-size:13px; margin-top:6px; }}
     <span>status_ok: <strong>{ok_count}/{len(summary)}</strong></span>
     <span>score_sum: <strong>{total_score:.3g}/{len(scored_rows)}</strong></span>
   </div>
-  <p>每一步都展示 Codex 的思路、执行的 pyautogui 动作、动作前截图和动作后截图。动作前截图是传给 Codex 决策的观测；动作后截图是 OSWorld 执行该 action 后返回的下一状态。</p>
+  <p>每一步都展示 Codex 的思路、执行的 pyautogui 动作、动作前截图和动作后状态。动作前截图是传给 Codex 决策的观测；动作后状态优先复用下一步的动作前截图，最后一步使用 <code>final.png</code>，避免重复保存同一帧。</p>
 </section>
 {''.join(sections)}
 </body>
