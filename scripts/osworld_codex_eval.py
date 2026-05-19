@@ -106,6 +106,17 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--snapshot-name", default="init_state")
     parser.add_argument("--headless", action="store_true")
     parser.add_argument("--domains", default=",".join(DEFAULT_TASKS))
+    parser.add_argument(
+        "--task-mode",
+        choices=["default", "all"],
+        default="default",
+        help="default runs one smoke task per domain; all runs every task JSON in the selected domains.",
+    )
+    parser.add_argument(
+        "--skip-completed",
+        action="store_true",
+        help="Skip tasks whose result.txt already exists in the result directory.",
+    )
     parser.add_argument("--max-steps", type=int, default=50)
     parser.add_argument("--model", default="gpt-5.4")
     parser.add_argument("--codex-bin", default=None)
@@ -141,6 +152,22 @@ def load_task(osworld_dir: Path, domain: str, task_id: str) -> dict[str, Any]:
     task_path = osworld_dir / "evaluation_examples" / "examples" / domain / f"{task_id}.json"
     with task_path.open("r", encoding="utf-8") as task_file:
         return json.load(task_file)
+
+
+def discover_tasks(osworld_dir: Path, domains: list[str], task_mode: str) -> list[tuple[str, str]]:
+    examples_dir = osworld_dir / "evaluation_examples" / "examples"
+    tasks = []
+    for domain in domains:
+        domain_dir = examples_dir / domain
+        if not domain_dir.is_dir():
+            raise RuntimeError(f"Unknown domain or missing examples directory: {domain}")
+        if task_mode == "default":
+            if domain not in DEFAULT_TASKS:
+                raise RuntimeError(f"No default smoke task configured for domain: {domain}")
+            tasks.append((domain, DEFAULT_TASKS[domain]))
+        else:
+            tasks.extend((domain, task_path.stem) for task_path in sorted(domain_dir.glob("*.json")))
+    return tasks
 
 
 def extract_json_object(text: str) -> dict[str, Any]:
@@ -231,9 +258,7 @@ def main() -> int:
     result_dir = resolve_path(original_cwd, args.result_dir)
     domains = [domain.strip() for domain in args.domains.split(",") if domain.strip()]
 
-    unknown = [domain for domain in domains if domain not in DEFAULT_TASKS]
-    if unknown:
-        raise RuntimeError(f"Unknown domains for this runner: {unknown}")
+    tasks = discover_tasks(osworld_dir, domains, args.task_mode)
 
     codex_bin = args.codex_bin or ensure_executable("codex")
     ensure_vmrun_on_path()
@@ -255,11 +280,34 @@ def main() -> int:
     summary = []
     result_dir.mkdir(parents=True, exist_ok=True)
     try:
-        for domain in domains:
-            task_id = DEFAULT_TASKS[domain]
+        for task_number, (domain, task_id) in enumerate(tasks, start=1):
             task = load_task(osworld_dir, domain, task_id)
             task_dir = result_dir / domain / task_id
             task_dir.mkdir(parents=True, exist_ok=True)
+            if args.skip_completed and (task_dir / "result.txt").exists():
+                try:
+                    score = float((task_dir / "result.txt").read_text(encoding="utf-8").strip())
+                except ValueError:
+                    score = None
+                row = {
+                    "domain": domain,
+                    "task_id": task_id,
+                    "status": "ok",
+                    "score": score,
+                    "error": None,
+                    "skipped": True,
+                }
+                summary.append(row)
+                (result_dir / "summary.json").write_text(
+                    json.dumps(summary, ensure_ascii=False, indent=2),
+                    encoding="utf-8",
+                )
+                print(
+                    f"codex_eval_skip task={task_number}/{len(tasks)} "
+                    f"domain={domain} task={task_id} score={score}",
+                    flush=True,
+                )
+                continue
             stale_paths = [
                 task_dir / "traj.jsonl",
                 task_dir / "result.txt",
@@ -276,7 +324,11 @@ def main() -> int:
                 "score": None,
                 "error": None,
             }
-            print(f"codex_eval_start domain={domain} task={task_id}", flush=True)
+            print(
+                f"codex_eval_start task={task_number}/{len(tasks)} "
+                f"domain={domain} task={task_id}",
+                flush=True,
+            )
             try:
                 observation = env.reset(task_config=task)
                 for step_index in range(1, args.max_steps + 1):
