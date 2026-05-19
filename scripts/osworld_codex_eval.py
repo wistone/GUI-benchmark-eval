@@ -46,6 +46,10 @@ The action field must be one of:
 - FAIL
 
 Use pyautogui only. Keep each action small and executable.
+You may use the Ubuntu Terminal as a normal GUI application when it is the most reliable way to complete or verify a desktop task. If you use Terminal, open it through the VM GUI and type commands with pyautogui; do not call subprocess, os.system, host tools, OSWorld backend APIs, or evaluator files directly from the action code.
+For OS/system settings tasks, do not rely only on a high-level GUI label if the real setting may be backed by lower-level configuration such as MIME associations, gsettings, dconf, or config files. Use the GUI where reasonable, then verify or repair from Terminal when that is a normal user-visible route.
+For Linux default-application or file-association tasks, a Settings page label can be incomplete. Before returning DONE, verify or repair the relevant associations from the VM Terminal using normal user commands such as xdg-mime query/default, and check more than one representative association when the task applies to a file category rather than a single extension.
+If a task explicitly requires using a particular application feature or explicitly forbids terminal/command-line tools, follow that task instruction and do not bypass the requested application workflow.
 Before returning DONE, verify from the current screenshot and recent history that the requested end state is actually visible or strongly implied. If the last action may still be loading or applying, return WAIT instead of DONE.
 If the task is not completed after an attempted action, do not repeat the same action blindly. Diagnose what changed, then try a different general route, such as opening the relevant menu/settings page directly, using keyboard shortcuts, search boxes, context menus, or another visible navigation path.
 If a route fails twice or the UI does not change as expected, switch strategy instead of continuing the same path.
