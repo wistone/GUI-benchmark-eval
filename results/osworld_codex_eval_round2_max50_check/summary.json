@@ -1,0 +1,72 @@
+[
+  {
+    "domain": "chrome",
+    "task_id": "bb5e4c0d-f964-439c-97b6-bdb9747de3f4",
+    "status": "ok",
+    "score": 1.0,
+    "error": null
+  },
+  {
+    "domain": "gimp",
+    "task_id": "7767eef2-56a3-4cea-8c9f-48c070c7d65b",
+    "status": "ok",
+    "score": 1.0,
+    "error": null
+  },
+  {
+    "domain": "libreoffice_calc",
+    "task_id": "01b269ae-2111-4a07-81fd-3fcd711993b0",
+    "status": "ok",
+    "score": 1.0,
+    "error": null
+  },
+  {
+    "domain": "libreoffice_impress",
+    "task_id": "2cd43775-7085-45d8-89fa-9e35c0a915cf",
+    "status": "ok",
+    "score": 1.0,
+    "error": null
+  },
+  {
+    "domain": "libreoffice_writer",
+    "task_id": "0e47de2a-32e0-456c-a366-8c607ef7a9d2",
+    "status": "ok",
+    "score": 1.0,
+    "error": null
+  },
+  {
+    "domain": "multi_apps",
+    "task_id": "937087b6-f668-4ba6-9110-60682ee33441",
+    "status": "ok",
+    "score": 0.0,
+    "error": null
+  },
+  {
+    "domain": "os",
+    "task_id": "28cc3b7e-b194-4bc9-8353-d04c0f4d56d2",
+    "status": "ok",
+    "score": 1.0,
+    "error": null
+  },
+  {
+    "domain": "thunderbird",
+    "task_id": "a10b69e1-6034-4a2b-93e1-571d45194f75",
+    "status": "ok",
+    "score": 1.0,
+    "error": null
+  },
+  {
+    "domain": "vlc",
+    "task_id": "215dfd39-f493-4bc3-a027-8a97d72c61bf",
+    "status": "ok",
+    "score": 1.0,
+    "error": null
+  },
+  {
+    "domain": "vs_code",
+    "task_id": "57242fad-77ca-454f-b71b-f187181a9f23",
+    "status": "ok",
+    "score": 1.0,
+    "error": null
+  }
+]

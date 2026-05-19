@@ -46,8 +46,11 @@ The action field must be one of:
 - FAIL
 
 Use pyautogui only. Keep each action small and executable.
-When the task appears completed, return DONE.
-When the task is impossible or blocked, return FAIL.
+Before returning DONE, verify from the current screenshot and recent history that the requested end state is actually visible or strongly implied. If the last action may still be loading or applying, return WAIT instead of DONE.
+If the task is not completed after an attempted action, do not repeat the same action blindly. Diagnose what changed, then try a different general route, such as opening the relevant menu/settings page directly, using keyboard shortcuts, search boxes, context menus, or another visible navigation path.
+If a route fails twice or the UI does not change as expected, switch strategy instead of continuing the same path.
+Return DONE only when the task's requested final state has been checked.
+Return FAIL only when the task is impossible or blocked after reasonable alternate routes.
 """
 
 
@@ -99,7 +102,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--snapshot-name", default="init_state")
     parser.add_argument("--headless", action="store_true")
     parser.add_argument("--domains", default=",".join(DEFAULT_TASKS))
-    parser.add_argument("--max-steps", type=int, default=15)
+    parser.add_argument("--max-steps", type=int, default=50)
     parser.add_argument("--model", default="gpt-5.4")
     parser.add_argument("--codex-bin", default=None)
     parser.add_argument(
@@ -109,6 +112,16 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--result-dir",
         default="results/osworld_codex_eval",
+    )
+    parser.add_argument(
+        "--analysis-html",
+        default=None,
+        help="Where to write the HTML analysis report. Defaults to RESULT_DIR/analysis.html.",
+    )
+    parser.add_argument(
+        "--no-analysis",
+        action="store_true",
+        help="Do not generate the HTML analysis report after the run.",
     )
     return parser.parse_args()
 
@@ -151,6 +164,14 @@ Recent action history:
 
 Return exactly one next action as JSON.
 """
+
+
+def save_observation_screenshot(observation: dict[str, Any], path: Path, label: str) -> Path:
+    screenshot = observation.get("screenshot")
+    if not screenshot:
+        raise RuntimeError(f"empty screenshot for {label}")
+    path.write_bytes(screenshot)
+    return path
 
 
 def call_codex(
@@ -235,6 +256,13 @@ def main() -> int:
             task = load_task(osworld_dir, domain, task_id)
             task_dir = result_dir / domain / task_id
             task_dir.mkdir(parents=True, exist_ok=True)
+            stale_paths = [
+                task_dir / "traj.jsonl",
+                task_dir / "result.txt",
+                *task_dir.glob("step_*.png"),
+            ]
+            for stale_path in stale_paths:
+                stale_path.unlink(missing_ok=True)
             history: list[dict[str, Any]] = []
             row = {
                 "domain": domain,
@@ -247,28 +275,45 @@ def main() -> int:
             try:
                 observation = env.reset(task_config=task)
                 for step_index in range(1, args.max_steps + 1):
-                    screenshot = observation.get("screenshot")
-                    if not screenshot:
-                        raise RuntimeError("empty screenshot")
-                    screenshot_path = task_dir / f"step_{step_index}.png"
-                    screenshot_path.write_bytes(screenshot)
+                    before_screenshot_path = task_dir / f"step_{step_index:03d}_before.png"
+                    save_observation_screenshot(
+                        observation,
+                        before_screenshot_path,
+                        f"step {step_index} before action",
+                    )
                     response = call_codex(
                         codex_bin=codex_bin,
                         model=args.model,
                         schema_path=schema_path,
-                        screenshot_path=screenshot_path,
+                        screenshot_path=before_screenshot_path,
                         prompt=build_prompt(task, step_index, history),
                         workdir=original_cwd,
                     )
                     action = response["action"].strip()
-                    history.append({"step": step_index, **response})
-                    with (task_dir / "traj.jsonl").open("a", encoding="utf-8") as traj_file:
-                        traj_file.write(json.dumps(history[-1], ensure_ascii=False) + "\n")
                     print(f"codex_eval_action step={step_index} action={action}", flush=True)
+                    with (task_dir / "traj.jsonl").open("a", encoding="utf-8") as traj_file:
+                        if action in {"DONE", "FAIL"}:
+                            next_observation, _, _, _ = env.step(action, pause=0.5)
+                        else:
+                            next_observation, _, _, _ = env.step(action, pause=1.0)
+                        after_screenshot_path = task_dir / f"step_{step_index:03d}_after.png"
+                        save_observation_screenshot(
+                            next_observation,
+                            after_screenshot_path,
+                            f"step {step_index} after action",
+                        )
+                        history.append(
+                            {
+                                "step": step_index,
+                                "before_screenshot": before_screenshot_path.name,
+                                "after_screenshot": after_screenshot_path.name,
+                                **response,
+                            }
+                        )
+                        traj_file.write(json.dumps(history[-1], ensure_ascii=False) + "\n")
                     if action in {"DONE", "FAIL"}:
-                        env.step(action, pause=0.5)
                         break
-                    observation, _, _, _ = env.step(action, pause=1.0)
+                    observation = next_observation
                 score = env.evaluate()
                 row["status"] = "ok"
                 row["score"] = float(score)
@@ -287,6 +332,20 @@ def main() -> int:
         env.close()
 
     ok_count = sum(row["status"] == "ok" for row in summary)
+    if not args.no_analysis:
+        from osworld_codex_report import write_report
+
+        analysis_path = (
+            resolve_path(original_cwd, args.analysis_html)
+            if args.analysis_html
+            else result_dir / "analysis.html"
+        )
+        write_report(
+            result_dir=result_dir,
+            osworld_dir=osworld_dir,
+            output_path=analysis_path,
+        )
+        print(f"analysis={analysis_path}")
     print(f"codex_eval_summary ok={ok_count} total={len(summary)}")
     print(f"summary={result_dir / 'summary.json'}")
     return 0 if ok_count == len(summary) else 1
