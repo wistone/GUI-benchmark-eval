@@ -1,0 +1,12 @@
+{
+  "name": "osworld_harness_v3_14_preservation_rerun_4",
+  "harness": "v3.14",
+  "created_at": "2026-05-26",
+  "strategy": "Re-run the preservation-critical subset to check whether the V3.14 Writer regression was stochastic while keeping the recovered download behavior.",
+  "tasks": [
+    { "domain": "libreoffice_writer", "task_id": "0810415c-bde4-4443-9047-d5f70165a697" },
+    { "domain": "libreoffice_impress", "task_id": "04578141-1d42-4146-b9cf-6fab4ce5fd74" },
+    { "domain": "multi_apps", "task_id": "0e5303d4-8820-42f6-b18d-daf7e633de21" },
+    { "domain": "chrome", "task_id": "030eeff7-b492-4218-b312-701ec99ee0cc" }
+  ]
+}

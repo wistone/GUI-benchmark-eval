@@ -1,0 +1,710 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Harness V1 到 V3.17 演进对比</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #17202a;
+      --muted: #5d6978;
+      --line: #d8dee8;
+      --panel: #ffffff;
+      --paper: #f5f7fb;
+      --blue: #2868c7;
+      --green: #138a67;
+      --amber: #b66d12;
+      --red: #bf3d30;
+      --violet: #7252b6;
+      --cyan: #087f8c;
+      --shadow: 0 12px 32px rgba(22, 32, 42, 0.08);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--paper);
+      color: var(--ink);
+      line-height: 1.5;
+    }
+
+    header {
+      background: #162033;
+      color: #fff;
+      padding: 34px 28px 26px;
+      border-bottom: 5px solid #2e9f79;
+    }
+
+    .wrap {
+      max-width: 1240px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      margin: 0 0 10px;
+      font-size: clamp(30px, 5vw, 54px);
+      line-height: 1.05;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      max-width: 900px;
+      color: #d9e1ed;
+      font-size: 17px;
+      margin: 0;
+    }
+
+    main {
+      padding: 24px 28px 42px;
+    }
+
+    .toolbar {
+      position: sticky;
+      top: 0;
+      z-index: 5;
+      background: rgba(245, 247, 251, 0.96);
+      border-bottom: 1px solid var(--line);
+      padding: 12px 0;
+      backdrop-filter: blur(12px);
+    }
+
+    .filters {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    button {
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--ink);
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    button.active {
+      background: #17202a;
+      color: #fff;
+      border-color: #17202a;
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+      margin: 22px 0;
+    }
+
+    .metric {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 16px;
+      box-shadow: var(--shadow);
+    }
+
+    .metric b {
+      display: block;
+      font-size: 28px;
+      line-height: 1.1;
+      margin-bottom: 6px;
+    }
+
+    .metric span {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .section-title {
+      margin: 30px 0 14px;
+      font-size: 22px;
+    }
+
+    .story {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 10px;
+      margin-bottom: 22px;
+    }
+
+    .stage {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-left: 5px solid var(--blue);
+      border-radius: 8px;
+      padding: 14px;
+      min-height: 132px;
+    }
+
+    .stage:nth-child(2) { border-left-color: var(--green); }
+    .stage:nth-child(3) { border-left-color: var(--amber); }
+    .stage:nth-child(4) { border-left-color: var(--violet); }
+    .stage:nth-child(5) { border-left-color: var(--cyan); }
+
+    .stage h3 {
+      margin: 0 0 7px;
+      font-size: 16px;
+    }
+
+    .stage p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .timeline {
+      position: relative;
+      display: grid;
+      gap: 14px;
+    }
+
+    .card {
+      display: grid;
+      grid-template-columns: 130px 1fr 230px;
+      gap: 16px;
+      align-items: stretch;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 16px;
+      box-shadow: var(--shadow);
+    }
+
+    .version {
+      border-right: 1px solid var(--line);
+      padding-right: 14px;
+    }
+
+    .version .name {
+      font-size: 24px;
+      font-weight: 800;
+      margin-bottom: 4px;
+    }
+
+    .version .date {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .tag-row {
+      display: flex;
+      gap: 7px;
+      flex-wrap: wrap;
+      margin: 8px 0 10px;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      min-height: 24px;
+      border-radius: 999px;
+      padding: 3px 9px;
+      font-size: 12px;
+      font-weight: 700;
+      color: #fff;
+      background: var(--blue);
+    }
+
+    .tag.policy { background: var(--blue); }
+    .tag.verify { background: var(--green); }
+    .tag.runner { background: var(--violet); }
+    .tag.rollback { background: var(--amber); }
+    .tag.risk { background: var(--red); }
+    .tag.download { background: var(--cyan); }
+
+    .main-point {
+      margin: 0 0 10px;
+      font-size: 18px;
+      font-weight: 750;
+    }
+
+    .detail {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .steps {
+      margin: 10px 0 0;
+      padding-left: 18px;
+      color: #283646;
+      font-size: 14px;
+    }
+
+    .steps li { margin: 4px 0; }
+
+    .score-box {
+      background: #f7f9fc;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 12px;
+    }
+
+    .score-label {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 7px;
+    }
+
+    .bar {
+      height: 12px;
+      border-radius: 999px;
+      background: #e1e7f0;
+      overflow: hidden;
+    }
+
+    .bar > span {
+      display: block;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, #2868c7, #2e9f79);
+    }
+
+    .note {
+      margin: 8px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    table {
+      border-collapse: collapse;
+      min-width: 980px;
+      width: 100%;
+      font-size: 14px;
+    }
+
+    th, td {
+      border-bottom: 1px solid var(--line);
+      padding: 10px 12px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      background: #eef3fa;
+      color: #29384a;
+      font-size: 13px;
+    }
+
+    tr:last-child td { border-bottom: 0; }
+
+    .legend {
+      color: var(--muted);
+      font-size: 13px;
+      margin: 9px 0 0;
+    }
+
+    footer {
+      color: var(--muted);
+      font-size: 13px;
+      padding: 22px 0 0;
+    }
+
+    @media (max-width: 980px) {
+      .summary-grid, .story { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .card { grid-template-columns: 1fr; }
+      .version { border-right: 0; border-bottom: 1px solid var(--line); padding: 0 0 10px; }
+    }
+
+    @media (max-width: 620px) {
+      header, main { padding-left: 16px; padding-right: 16px; }
+      .summary-grid, .story { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap">
+      <h1>Harness V1 到 V3.17 演进对比</h1>
+      <p class="subtitle">按 step-by-step 展示每个版本为什么改、重点提升了什么、带来了什么风险，以及已有小样本结果。中文解释优先，保留关键英文术语方便回看原始 prompt。</p>
+    </div>
+  </header>
+
+  <div class="toolbar">
+    <div class="wrap filters" aria-label="筛选版本">
+      <button class="active" data-filter="all">全部</button>
+      <button data-filter="policy">Prompt 策略</button>
+      <button data-filter="verify">验证/保存</button>
+      <button data-filter="download">下载任务</button>
+      <button data-filter="runner">Runner 干预</button>
+      <button data-filter="rollback">回滚/保守修复</button>
+      <button data-filter="risk">明显回归</button>
+    </div>
+  </div>
+
+  <main>
+    <div class="wrap">
+      <section class="summary-grid">
+        <div class="metric"><b>19</b><span>页面覆盖版本：V1、V2、V3 到 V3.17</span></div>
+        <div class="metric"><b>5</b><span>主线阶段：基础约束、精确验证、任务剧本、Runner 干预、保守修复</span></div>
+        <div class="metric"><b>79.7%</b><span>V3.3/V3.4 sanity 5 的高点，小样本不可直接外推</span></div>
+        <div class="metric"><b>56.6%</b><span>V3.14 tactical 30 当前大一些样本结果</span></div>
+      </section>
+
+      <h2 class="section-title">整体主线</h2>
+      <section class="story">
+        <article class="stage">
+          <h3>1. 先让动作变干净</h3>
+          <p>V1/V2 主要是清理 prompt、action schema，并探索 screenshot、a11y tree、OCR 等观测输入。</p>
+        </article>
+        <article class="stage">
+          <h3>2. 防止过早 DONE</h3>
+          <p>V3 开始强调每次动作后的状态检查，文件、设置、导出任务不能只看 UI 感觉。</p>
+        </article>
+        <article class="stage">
+          <h3>3. 从原则到剧本</h3>
+          <p>V3.1 到 V3.5 把“精确范围、不要近似替代、保存后验证”变成 Office、下载、VS Code 的具体规则。</p>
+        </article>
+        <article class="stage">
+          <h3>4. 处理重复循环</h3>
+          <p>V3.6 到 V3.10 重点处理长命令输入、Terminal 循环、早停 DONE，并引入 runner 层拦截。</p>
+        </article>
+        <article class="stage">
+          <h3>5. 小步保守修复</h3>
+          <p>V3.11 到 V3.17 以 preservation 为核心，发现过宽干预会回归后，逐步收窄 guard。</p>
+        </article>
+      </section>
+
+      <h2 class="section-title">Step-by-step 版本时间线</h2>
+      <section class="timeline" id="timeline"></section>
+
+      <h2 class="section-title">横向对比表</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>版本</th>
+              <th>提升重点</th>
+              <th>主要收益</th>
+              <th>主要风险/教训</th>
+              <th>结果线索</th>
+            </tr>
+          </thead>
+          <tbody id="compareRows"></tbody>
+        </table>
+      </div>
+      <p class="legend">说明：不同版本使用的验证集大小不同，百分比只用于理解迭代走势，不应直接当作同一基准下的排名。</p>
+
+      <footer>
+        数据来源：docs/harness-optimization-plan.md、docs/harness_versions/harness_v3*.md，以及 results/harness_v*/summary.json。V1 没找到独立版本 prompt 文件，因此按优化计划中的 v1 描述展示。
+      </footer>
+    </div>
+  </main>
+
+  <script>
+    const versions = [
+      {
+        version: "V1",
+        date: "计划阶段",
+        tags: ["policy"],
+        point: "清理 prompt 和 action schema",
+        detail: "把模型输出限制得更干净，减少无效动作、no-op 和 schema 不匹配。",
+        steps: ["统一动作格式", "减少不必要的自由发挥", "为后续可比较实验建立基础"],
+        benefit: "执行更可控，错误更容易归因。",
+        risk: "约束太强可能降低模型临场修复能力。",
+        result: "未找到独立 V1 prompt/summary。",
+        score: null
+      },
+      {
+        version: "V2",
+        date: "2026-05-20",
+        tags: ["policy", "verify"],
+        point: "探索观测形式：screenshot、a11y tree、OCR",
+        detail: "核心目标是提升 grounding 和 UI 理解，让模型不只依赖单一截图判断。",
+        steps: ["引入或比较不同观测输入", "做 stratified 50 作为较大样本参考", "形成后续 V3 对照基线"],
+        benefit: "在已有 stratified 50 上得到 32.7993/50，约 65.6%。",
+        risk: "token 成本上升；不同任务集结果不能和后续小样本直接横比。",
+        result: "stratified 50：65.6%。",
+        score: 65.6
+      },
+      {
+        version: "V3",
+        date: "2026-05-25",
+        tags: ["policy", "verify", "risk"],
+        point: "每个动作后做状态检查，减少过度修复",
+        detail: "要求 mutation 和 verification 分离，DONE 前必须用可观察证据确认。",
+        steps: ["不要在目标已满足后继续改", "文件任务要验证存在、名称、保存状态", "卡住时换策略或 FAIL"],
+        benefit: "建立 V3 系列的验证-first 思路。",
+        risk: "sanity 5 只有 20.0%；还丢失了 V2 的不可行任务判断。",
+        result: "sanity 5：20.0%。",
+        score: 20
+      },
+      {
+        version: "V3.1",
+        date: "2026-05-25",
+        tags: ["policy", "verify"],
+        point: "严格执行 exact task，不做相邻替代",
+        detail: "恢复不可行任务 FAIL 语义，强调范围、文件、行、幻灯片、应用都要精确。",
+        steps: ["只做用户明确要求", "不可用就 FAIL，不改附近设置", "验证目标范围和无关区域未被改"],
+        benefit: "Chrome 不可行任务恢复；VLC 接近满分。",
+        risk: "Calc、VS Code、下载任务仍不稳。",
+        result: "sanity 5：39.7%。",
+        score: 39.7
+      },
+      {
+        version: "V3.2",
+        date: "2026-05-25",
+        tags: ["policy", "download", "verify"],
+        point: "加入 typed playbooks",
+        detail: "针对 Calc 精确范围、VS Code keybindings、下载集合、媒体转换、不可行任务写具体规则。",
+        steps: ["Calc 填空只处理空白 run", "VS Code 优先 JSON 配置", "下载前推断完整集合", "媒体文件要验证类型/大小/编码"],
+        benefit: "把抽象原则变成可执行路径。",
+        risk: "小样本结果未超过 V3.1，说明规则还不够强或执行不稳定。",
+        result: "sanity 5：39.7%。",
+        score: 39.7
+      },
+      {
+        version: "V3.3",
+        date: "2026-05-25",
+        tags: ["verify", "download"],
+        point: "把最终 artifact/state 作为真相源",
+        detail: "文件、设置、快捷键、下载、导出、表格任务不能只看视觉完成；允许 VM Terminal 精确修复用户文件。",
+        steps: ["结构化文件优先验证文件本体", "VS Code JSON 可直接写入并校验", "下载慢时可枚举链接批量下载"],
+        benefit: "sanity 5 大幅提升到 79.7%。",
+        risk: "Terminal 路线变多，后续可能引发长命令循环。",
+        result: "sanity 5：79.7%。",
+        score: 79.7
+      },
+      {
+        version: "V3.4",
+        date: "2026-05-25",
+        tags: ["download", "verify"],
+        point: "强化下载集合规则",
+        detail: "超过 3 个文件时尽早批量枚举/下载；编号文件要补齐中间序号并查 no gaps。",
+        steps: ["先推断完整文件集合", "编号 week/lecture/part 不漏中间号", "验证文件名、扩展名、目录、大小"],
+        benefit: "sanity 5 保持 79.7%；开始跑 tactical 30。",
+        risk: "tactical 30 只有 50.0%，说明下载之外还有多个失败簇。",
+        result: "sanity 5：79.7%；tactical 30：50.0%。",
+        score: 50
+      },
+      {
+        version: "V3.5",
+        date: "2026-05-25",
+        tags: ["verify", "download", "policy"],
+        point: "从 tactical 30 失败簇补规则",
+        detail: "加强 Office 保存后验证、Writer 精确编辑、Calc 图表、Impress 精确颜色、重复生成任务。",
+        steps: ["Office 不能截图 DONE", "Writer 放弃反复像素点击", "Impress 使用 exact named/basic color", "重复下载/生成早转 Terminal"],
+        benefit: "覆盖更多失败类型。",
+        risk: "引入更多脚本/命令路径，执行层开始成为瓶颈。",
+        result: "failure-focus 8：50.0%。",
+        score: 50
+      },
+      {
+        version: "V3.6",
+        date: "2026-05-25",
+        tags: ["runner", "policy", "risk"],
+        point: "修复长 Terminal 输入失败",
+        detail: "长命令/脚本改用 clipboard paste，失败后识别 shell/python/here-doc 状态，不再盲目重打。",
+        steps: ["长文本粘贴而非逐字输入", "检测命令是否真的执行", "两次失败后换路线或 FAIL"],
+        benefit: "针对 V3.5 的执行失败做低层修复。",
+        risk: "execution-focus 6 只有 33.3%，说明仍会卡在命令执行和循环。",
+        result: "execution-focus 6：33.3%。",
+        score: 33.3
+      },
+      {
+        version: "V3.7",
+        date: "2026-05-25",
+        tags: ["runner", "policy"],
+        point: "动态 guardrails 注入 prompt",
+        detail: "runner 根据近期动作历史给模型加警告，例如不要继续长命令、不要继续 probe、颜色任务用精确值。",
+        steps: ["识别重复长文本/脚本输入", "识别 Terminal probe 循环", "任务类型触发提醒"],
+        benefit: "尝试在 prompt 层阻止 max-step 消耗。",
+        risk: "仍是提示级干预，不能保证模型遵守。",
+        result: "guardrail-focus 5：40.0%。",
+        score: 40
+      },
+      {
+        version: "V3.8",
+        date: "2026-05-25",
+        tags: ["runner", "risk"],
+        point: "Runner 预执行拦截动作",
+        detail: "不再只警告，而是在执行前拒绝重复 Terminal/text-entry/palette-click 动作并要求重规划。",
+        steps: ["拦截重复 wget/curl/ls/find/probe", "拦截重复长脚本输入", "拦截 exact color 右侧调色板重复点击"],
+        benefit: "exact Impress color 和 Chrome 有恢复迹象。",
+        risk: "拦截太宽，下载和 Writer 被伤害。",
+        result: "intervention-focus 5：40.0%。",
+        score: 40
+      },
+      {
+        version: "V3.9",
+        date: "2026-05-25",
+        tags: ["runner", "rollback", "verify"],
+        point: "保留窄干预，撤掉宽拦截",
+        detail: "关闭广泛 Terminal/download/text-entry 拒绝，只保留 exact color palette 拦截和 Office early DONE gate。",
+        steps: ["恢复下载任务可用性", "保留颜色任务精确性", "Office 保存后不能马上 DONE"],
+        benefit: "小样本回到 60.0%。",
+        risk: "命令循环风险回来，只能靠更窄规则处理。",
+        result: "narrow-intervention 5：60.0%。",
+        score: 60
+      },
+      {
+        version: "V3.10",
+        date: "2026-05-26",
+        tags: ["runner", "verify"],
+        point: "修 Office early-DONE gate 的 runner bug",
+        detail: "Ctrl+S 检测改成允许空格差异，能识别 pyautogui.hotkey('ctrl', 's')。",
+        steps: ["正确识别保存动作", "保存后强制进入验证", "继续禁用 broad Terminal/download 拦截"],
+        benefit: "保留 V3.9 的 Writer/download/Chrome 恢复。",
+        risk: "验证可能还是查错对象或属性。",
+        result: "office-done 5：60.0%。",
+        score: 60
+      },
+      {
+        version: "V3.11",
+        date: "2026-05-26",
+        tags: ["runner", "verify", "risk"],
+        point: "Color/PDF guard，但出现回归",
+        detail: "约束 named Office color 不要乱用 CSS RGB，同时给 PDF/form 生成加早 FAIL 拦截。",
+        steps: ["拒绝纯 #00FF00 冒充 Office green", "PDF/form 失败前必须做一次非交互生成尝试", "继续保留 Office DONE gate"],
+        benefit: "目标是修颜色和 PDF/form。",
+        risk: "结果降到 20.0%，PDF/form 规则过宽带来回归。",
+        result: "color-pdf 5：20.0%。",
+        score: 20
+      },
+      {
+        version: "V3.12",
+        date: "2026-05-26",
+        tags: ["rollback", "verify"],
+        point: "回滚 V3.11 大部分改动，只保留 named green 窄修复",
+        detail: "回到 V3.10 行为面，移除 PDF/form prompt 和 early-FAIL rejection。",
+        steps: ["保留 Ctrl+S/Office DONE gate", "保留 Terminal/download broad rejection disabled", "green 使用 Basic/Standard 或 #00A933"],
+        benefit: "恢复到 60.0%。",
+        risk: "PDF generation 仍弱；green 仍只是提示/拦截，不是强制文件编辑。",
+        result: "named-green 5：60.0%。",
+        score: 60
+      },
+      {
+        version: "V3.13",
+        date: "2026-05-26",
+        tags: ["download", "runner"],
+        point: "下载任务 drift detector",
+        detail: "针对重复编号 PDF 下载，在多次尝试后拒绝继续浏览/抓取/近似下载，要求一个简洁 loop 完整下载并验证。",
+        steps: ["保留 V3.12 green 和 V3.10 DONE gate", "检测 repeated numbered PDF download drift", "要求完整 numbered set + 文件名/大小验证"],
+        benefit: "保持 60.0%，意在恢复 V3.10 下载行为。",
+        risk: "可能拒绝合法的晚期恢复动作。",
+        result: "download-guard 5：60.0%。",
+        score: 60
+      },
+      {
+        version: "V3.14",
+        date: "2026-05-26",
+        tags: ["download", "runner", "verify"],
+        point: "下载目标目录 guard",
+        detail: "从 VM setup 中提取打开的文件夹，防止模型把文件下载到 ~/Downloads 或 ~ 而不是任务要求目录。",
+        steps: ["识别 nautilus 打开的目录", "拒绝错误默认目录的最终下载 loop", "晚期提示明确目标文件夹"],
+        benefit: "preservation 4 达到 100%；tactical 30 达到 56.6%。",
+        risk: "依赖 setup hint；如果任务最终目录不同，需要模型明确说明。",
+        result: "folder 5：60.0%；preservation 4：100%；tactical 30：56.6%。",
+        score: 56.6
+      },
+      {
+        version: "V3.15",
+        date: "2026-05-26",
+        tags: ["download", "runner", "policy"],
+        point: "failure-focus stabilization",
+        detail: "V3.14 tactical 30 有提升但不够，继续补下载、Writer、Calc、VS Code 失败簇。",
+        steps: ["下载前先枚举 exact PDF hrefs", "VS Code 禁止硬编码 /home/oai 或 /home/user", "Writer/Calc/VS Code 加 focused warnings"],
+        benefit: "保留已知 win，同时尝试修主失败簇。",
+        risk: "failure-focus 10 只有 40.0%，未达到扩展门槛。",
+        result: "failure-focus 10：40.0%。",
+        score: 40
+      },
+      {
+        version: "V3.16",
+        date: "2026-05-26",
+        tags: ["runner", "download", "risk"],
+        point: "更窄 runner guard 微迭代",
+        detail: "拒绝粘贴但不执行的 Terminal 动作、重复长脚本、未经验证的猜测编号 URL、后期 Calc 点击循环。",
+        steps: ["保留 VS Code current-user config guard", "粘贴命令必须执行", "PDF URL 模板必须先验证 href/template", "Calc 图表后期转文件结构验证或 FAIL"],
+        benefit: "想用更硬的执行层规则阻止无效循环。",
+        risk: "runner-guard 6 只有 32.1%，保存项出现回归风险。",
+        result: "runner-guard 6：32.1%。",
+        score: 32.1
+      },
+      {
+        version: "V3.17",
+        date: "2026-05-26",
+        tags: ["runner", "rollback", "verify"],
+        point: "preserve repair 微迭代",
+        detail: "保留 V3.16 有用信号，但优先修复 preservation 回归，尤其 VS Code 和 exact color。",
+        steps: ["保留下载反猜 URL 压力", "保留 Writer post-save DONE guard", "VS Code JSON 写好后拒绝 GUI 漂移", "非 green 任务拒绝 green-specific 色值"],
+        benefit: "目标是先恢复 VS Code/Impress preservation，再决定是否跑 30-task。",
+        risk: "当前 summary 只有 3 条记录，不能当作完整 5-task 结论。",
+        result: "preserve-repair summary 当前 3 条：33.3%。",
+        score: 33.3
+      }
+    ];
+
+    const tagNames = {
+      policy: "策略",
+      verify: "验证",
+      runner: "Runner",
+      rollback: "回滚",
+      risk: "回归",
+      download: "下载"
+    };
+
+    function render(filter = "all") {
+      const list = filter === "all" ? versions : versions.filter(v => v.tags.includes(filter));
+      const timeline = document.getElementById("timeline");
+      timeline.innerHTML = list.map(v => `
+        <article class="card" data-tags="${v.tags.join(" ")}">
+          <div class="version">
+            <div class="name">${v.version}</div>
+            <div class="date">${v.date}</div>
+          </div>
+          <div>
+            <div class="tag-row">${v.tags.map(t => `<span class="tag ${t}">${tagNames[t]}</span>`).join("")}</div>
+            <p class="main-point">${v.point}</p>
+            <p class="detail">${v.detail}</p>
+            <ol class="steps">${v.steps.map(s => `<li>${s}</li>`).join("")}</ol>
+          </div>
+          <div class="score-box">
+            <div class="score-label"><span>结果线索</span><strong>${v.score == null ? "N/A" : v.score + "%"}</strong></div>
+            <div class="bar"><span style="width:${v.score == null ? 0 : Math.max(4, Math.min(100, v.score))}%"></span></div>
+            <p class="note">${v.result}</p>
+          </div>
+        </article>
+      `).join("");
+
+      const rows = document.getElementById("compareRows");
+      rows.innerHTML = list.map(v => `
+        <tr>
+          <td><strong>${v.version}</strong><br><span class="note">${v.date}</span></td>
+          <td>${v.point}</td>
+          <td>${v.benefit}</td>
+          <td>${v.risk}</td>
+          <td>${v.result}</td>
+        </tr>
+      `).join("");
+    }
+
+    document.querySelectorAll("button[data-filter]").forEach(button => {
+      button.addEventListener("click", () => {
+        document.querySelectorAll("button[data-filter]").forEach(b => b.classList.remove("active"));
+        button.classList.add("active");
+        render(button.dataset.filter);
+      });
+    });
+
+    render();
+  </script>
+</body>
+</html>

@@ -1,0 +1,40 @@
+{
+  "name": "osworld_harness_v3_19_repair_focus_8",
+  "harness": "v3.19",
+  "created_at": "2026-05-26",
+  "strategy": "8-task repair-focus validation after V3.18 tactical 30: repair failed Calc, Office, and multi-app artifact clusters while preserving the V3.18 download and VS Code wins. Generic harness changes only.",
+  "tasks": [
+    {
+      "domain": "libreoffice_calc",
+      "task_id": "2bd59342-0664-4ccb-ba87-79379096cc08"
+    },
+    {
+      "domain": "libreoffice_calc",
+      "task_id": "01b269ae-2111-4a07-81fd-3fcd711993b0"
+    },
+    {
+      "domain": "libreoffice_calc",
+      "task_id": "0326d92d-d218-48a8-9ca1-981cd6d064c7"
+    },
+    {
+      "domain": "libreoffice_impress",
+      "task_id": "04578141-1d42-4146-b9cf-6fab4ce5fd74"
+    },
+    {
+      "domain": "libreoffice_writer",
+      "task_id": "0810415c-bde4-4443-9047-d5f70165a697"
+    },
+    {
+      "domain": "multi_apps",
+      "task_id": "185f29bd-5da0-40a6-b69c-ba7f4e0324ef"
+    },
+    {
+      "domain": "multi_apps",
+      "task_id": "0e5303d4-8820-42f6-b18d-daf7e633de21"
+    },
+    {
+      "domain": "vs_code",
+      "task_id": "930fdb3b-11a8-46fe-9bac-577332e2640e"
+    }
+  ]
+}

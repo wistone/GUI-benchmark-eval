@@ -1,0 +1,26 @@
+[
+  {
+    "domain": "libreoffice_calc",
+    "task_id": "2bd59342-0664-4ccb-ba87-79379096cc08"
+  },
+  {
+    "domain": "libreoffice_calc",
+    "task_id": "0326d92d-d218-48a8-9ca1-981cd6d064c7"
+  },
+  {
+    "domain": "libreoffice_writer",
+    "task_id": "0a0faba3-5580-44df-965d-f562a99b291c"
+  },
+  {
+    "domain": "multi_apps",
+    "task_id": "0e5303d4-8820-42f6-b18d-daf7e633de21"
+  },
+  {
+    "domain": "vs_code",
+    "task_id": "930fdb3b-11a8-46fe-9bac-577332e2640e"
+  },
+  {
+    "domain": "libreoffice_impress",
+    "task_id": "04578141-1d42-4146-b9cf-6fab4ce5fd74"
+  }
+]

@@ -1,0 +1,16 @@
+{
+  "name": "osworld_harness_v3_5_failure_focus_8",
+  "harness": "v3.5",
+  "created_at": "2026-05-25",
+  "strategy": "Small failure-cluster validation after V3.4 tactical30. Covers Office saved-artifact/precision edits, long download/generation workflows, Chrome exact settings/search, and OS unavailable/install behavior. No per-task special cases.",
+  "tasks": [
+    { "domain": "libreoffice_writer", "task_id": "0810415c-bde4-4443-9047-d5f70165a697" },
+    { "domain": "libreoffice_writer", "task_id": "0b17a146-2934-46c7-8727-73ff6b6483e8" },
+    { "domain": "libreoffice_calc", "task_id": "0326d92d-d218-48a8-9ca1-981cd6d064c7" },
+    { "domain": "libreoffice_impress", "task_id": "04578141-1d42-4146-b9cf-6fab4ce5fd74" },
+    { "domain": "multi_apps", "task_id": "0e5303d4-8820-42f6-b18d-daf7e633de21" },
+    { "domain": "multi_apps", "task_id": "185f29bd-5da0-40a6-b69c-ba7f4e0324ef" },
+    { "domain": "chrome", "task_id": "030eeff7-b492-4218-b312-701ec99ee0cc" },
+    { "domain": "os", "task_id": "94d95f96-9699-4208-98ba-3c3119edf9c2" }
+  ]
+}

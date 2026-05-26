@@ -1,0 +1,52 @@
+{
+  "tasks": [
+    {
+      "domain": "chrome",
+      "task_id": "030eeff7-b492-4218-b312-701ec99ee0cc",
+      "historical_label": "correct",
+      "historical_score": 1.0,
+      "historical_status": "ok",
+      "instruction": "Can you enable the 'Do Not Track' feature in Chrome to enhance my online privacy?"
+    },
+    {
+      "domain": "gimp",
+      "task_id": "06ca5602-62ca-47f6-ad4f-da151cde54cc",
+      "historical_label": "correct",
+      "historical_score": 1.0,
+      "historical_status": "ok",
+      "instruction": "Could you help me set the image to Palette-Based?"
+    },
+    {
+      "domain": "libreoffice_calc",
+      "task_id": "01b269ae-2111-4a07-81fd-3fcd711993b0",
+      "historical_label": "correct",
+      "historical_score": 1.0,
+      "historical_status": "ok",
+      "instruction": "Fill all the blank cells in B1:E30 with the value in the cell above it. Finish the work and don't touch irrelevant regions, even if they are blank."
+    },
+    {
+      "domain": "libreoffice_impress",
+      "task_id": "08aced46-45a2-48d7-993b-ed3fb5b32302",
+      "historical_label": "correct",
+      "historical_score": 1.0,
+      "historical_status": "ok",
+      "instruction": "Give the slide 2 the right aligned title, \"Note\"."
+    },
+    {
+      "domain": "libreoffice_writer",
+      "task_id": "0a0faba3-5580-44df-965d-f562a99b291c",
+      "historical_label": "correct",
+      "historical_score": 1.0,
+      "historical_status": "ok",
+      "instruction": "I would like to make the first three words of the sentence left-aligned and the rest right-aligned. I basically want to have some empty space in the middle to add some photos. Assume that every sentence will have at least three words. Could you help me on alignment for me using tabstops?"
+    },
+    {
+      "domain": "multi_apps",
+      "task_id": "00fa164e-2612-4439-992e-157d019a8436",
+      "historical_label": "correct",
+      "historical_score": 1.0,
+      "historical_status": "ok",
+      "instruction": "I need to include the experiment results from \"~/Documents/awesome-desktop/expe-results.xlsx\" into the currently writing report. Specifically, extract the results of GPT-4 and insert a table into the \"Main Results\" section of my report. Remember to paste the table header, too."
+    }
+  ]
+}

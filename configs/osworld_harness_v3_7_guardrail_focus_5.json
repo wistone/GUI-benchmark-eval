@@ -1,0 +1,13 @@
+{
+  "name": "osworld_harness_v3_7_guardrail_focus_5",
+  "harness": "v3.7",
+  "created_at": "2026-05-25",
+  "strategy": "Small validation for V3.7 dynamic progress guardrails. Retest one V3.6 regression, one command-heavy failure, one Writer failure, and two V3.6/V3.5 preserved wins before any larger run.",
+  "tasks": [
+    { "domain": "libreoffice_impress", "task_id": "04578141-1d42-4146-b9cf-6fab4ce5fd74" },
+    { "domain": "multi_apps", "task_id": "185f29bd-5da0-40a6-b69c-ba7f4e0324ef" },
+    { "domain": "libreoffice_writer", "task_id": "0810415c-bde4-4443-9047-d5f70165a697" },
+    { "domain": "multi_apps", "task_id": "0e5303d4-8820-42f6-b18d-daf7e633de21" },
+    { "domain": "chrome", "task_id": "030eeff7-b492-4218-b312-701ec99ee0cc" }
+  ]
+}

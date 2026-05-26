@@ -1,0 +1,306 @@
+{
+  "tasks": [
+    {
+      "domain": "chrome",
+      "task_id": "2888b4e6-5b47-4b57-8bf5-c73827890774",
+      "historical_label": "wrong",
+      "historical_score": 0.0,
+      "historical_status": "ok",
+      "instruction": "Show me all men's large-size short-sleeve shirts with a discount of 50% or more."
+    },
+    {
+      "domain": "chrome",
+      "task_id": "2ae9ba84-3a0d-4d4c-8338-3a1478dc5fe3",
+      "historical_label": "wrong",
+      "historical_score": 0.0,
+      "historical_status": "ok",
+      "instruction": "Lately I have changed my English name to Thomas. I want to update my username. Could you help me change the username in chrome profiles to Thomas?"
+    },
+    {
+      "domain": "chrome",
+      "task_id": "030eeff7-b492-4218-b312-701ec99ee0cc",
+      "historical_label": "correct",
+      "historical_score": 1.0,
+      "historical_status": "ok",
+      "instruction": "Can you enable the 'Do Not Track' feature in Chrome to enhance my online privacy?"
+    },
+    {
+      "domain": "gimp",
+      "task_id": "045bf3ff-9077-4b86-b483-a1040a949cff",
+      "historical_label": "wrong",
+      "historical_score": 0.0,
+      "historical_status": "ok",
+      "instruction": "Could you turn my image into CYMK mode within GIMP ?"
+    },
+    {
+      "domain": "gimp",
+      "task_id": "2a729ded-3296-423d-aec4-7dd55ed5fbb3",
+      "historical_label": "wrong",
+      "historical_score": 0.0,
+      "historical_status": "ok",
+      "instruction": "Could you make the background of this image transparent for me?"
+    },
+    {
+      "domain": "gimp",
+      "task_id": "06ca5602-62ca-47f6-ad4f-da151cde54cc",
+      "historical_label": "correct",
+      "historical_score": 1.0,
+      "historical_status": "ok",
+      "instruction": "Could you help me set the image to Palette-Based?"
+    },
+    {
+      "domain": "libreoffice_calc",
+      "task_id": "0326d92d-d218-48a8-9ca1-981cd6d064c7",
+      "historical_label": "wrong",
+      "historical_score": 0.0,
+      "historical_status": "ok",
+      "instruction": "Calculate the total sales in an underneath row called \"Total\" and display the total of each month as bars. Then calculate the month-on-month growth percentage for Feb to Jun in another row called \"Growth\" and show them in a line chart (Jan should be omitted in the chart as well). Set the chart titles as the two row headers respectively."
+    },
+    {
+      "domain": "libreoffice_calc",
+      "task_id": "1954cced-e748-45c4-9c26-9855b97fbc5e",
+      "historical_label": "wrong",
+      "historical_score": 0.0,
+      "historical_status": "ok",
+      "instruction": "Create a Pivot Table in a new sheet (Sheet2) to count how many times each \"Invoice No.\" appears."
+    },
+    {
+      "domain": "libreoffice_calc",
+      "task_id": "01b269ae-2111-4a07-81fd-3fcd711993b0",
+      "historical_label": "correct",
+      "historical_score": 1.0,
+      "historical_status": "ok",
+      "instruction": "Fill all the blank cells in B1:E30 with the value in the cell above it. Finish the work and don't touch irrelevant regions, even if they are blank."
+    },
+    {
+      "domain": "libreoffice_impress",
+      "task_id": "04578141-1d42-4146-b9cf-6fab4ce5fd74",
+      "historical_label": "wrong",
+      "historical_score": 0.0,
+      "historical_status": "ok",
+      "instruction": "Change the text color in the textboxes to on slide 1 yellow, red, and green, respectively, in top-to-bottom order. Use exactly these colors—no variations (e.g., no dark red, light green, etc.)."
+    },
+    {
+      "domain": "libreoffice_impress",
+      "task_id": "05dd4c1d-c489-4c85-8389-a7836c4f0567",
+      "historical_label": "wrong",
+      "historical_score": 0.0,
+      "historical_status": "ok",
+      "instruction": "Align the text of the first textbox on slide 3 to the right, on slide 4 to the center, and on slide 5 to the left. Ensure that the alignment is applied correctly to each respective slide."
+    },
+    {
+      "domain": "libreoffice_impress",
+      "task_id": "08aced46-45a2-48d7-993b-ed3fb5b32302",
+      "historical_label": "correct",
+      "historical_score": 1.0,
+      "historical_status": "ok",
+      "instruction": "Give the slide 2 the right aligned title, \"Note\"."
+    },
+    {
+      "domain": "libreoffice_writer",
+      "task_id": "0810415c-bde4-4443-9047-d5f70165a697",
+      "historical_label": "wrong",
+      "historical_score": 0.0,
+      "historical_status": "ok",
+      "instruction": "Make the line spacing of first two paragraph into double line spacing"
+    },
+    {
+      "domain": "libreoffice_writer",
+      "task_id": "0b17a146-2934-46c7-8727-73ff6b6483e8",
+      "historical_label": "wrong",
+      "historical_score": 0.0,
+      "historical_status": "ok",
+      "instruction": "Help me change the 2 in \"H2O\" to a subscript."
+    },
+    {
+      "domain": "libreoffice_writer",
+      "task_id": "0a0faba3-5580-44df-965d-f562a99b291c",
+      "historical_label": "correct",
+      "historical_score": 1.0,
+      "historical_status": "ok",
+      "instruction": "I would like to make the first three words of the sentence left-aligned and the rest right-aligned. I basically want to have some empty space in the middle to add some photos. Assume that every sentence will have at least three words. Could you help me on alignment for me using tabstops?"
+    },
+    {
+      "domain": "multi_apps",
+      "task_id": "09a37c51-e625-49f4-a514-20a773797a8a",
+      "historical_label": "wrong",
+      "historical_score": 0.8302980951698047,
+      "historical_status": "ok",
+      "instruction": "I've received a request from my friend who asked for assistance in editing an image. The document with the requirements and the picture to be adjusted are on the Desktop. Please make the necessary modifications to the image as his instructions and save the edited picture as \"pic.jpg\" on the Desktop. Thank you!"
+    },
+    {
+      "domain": "multi_apps",
+      "task_id": "0e5303d4-8820-42f6-b18d-daf7e633de21",
+      "historical_label": "wrong",
+      "historical_score": 0.0,
+      "historical_status": "ok",
+      "instruction": "I want to learn python programming and my friend recommends me this course website. I have grabbed the lecture slide for week 0. Please download the PDFs for other weeks into the opened folder and leave the file name as-it-is."
+    },
+    {
+      "domain": "multi_apps",
+      "task_id": "00fa164e-2612-4439-992e-157d019a8436",
+      "historical_label": "correct",
+      "historical_score": 1.0,
+      "historical_status": "ok",
+      "instruction": "I need to include the experiment results from \"~/Documents/awesome-desktop/expe-results.xlsx\" into the currently writing report. Specifically, extract the results of GPT-4 and insert a table into the \"Main Results\" section of my report. Remember to paste the table header, too."
+    }
+  ],
+  "selection_report": {
+    "chrome": [
+      {
+        "domain": "chrome",
+        "task_id": "2888b4e6-5b47-4b57-8bf5-c73827890774",
+        "historical_label": "wrong",
+        "historical_score": 0.0,
+        "historical_status": "ok",
+        "instruction": "Show me all men's large-size short-sleeve shirts with a discount of 50% or more."
+      },
+      {
+        "domain": "chrome",
+        "task_id": "2ae9ba84-3a0d-4d4c-8338-3a1478dc5fe3",
+        "historical_label": "wrong",
+        "historical_score": 0.0,
+        "historical_status": "ok",
+        "instruction": "Lately I have changed my English name to Thomas. I want to update my username. Could you help me change the username in chrome profiles to Thomas?"
+      },
+      {
+        "domain": "chrome",
+        "task_id": "030eeff7-b492-4218-b312-701ec99ee0cc",
+        "historical_label": "correct",
+        "historical_score": 1.0,
+        "historical_status": "ok",
+        "instruction": "Can you enable the 'Do Not Track' feature in Chrome to enhance my online privacy?"
+      }
+    ],
+    "gimp": [
+      {
+        "domain": "gimp",
+        "task_id": "045bf3ff-9077-4b86-b483-a1040a949cff",
+        "historical_label": "wrong",
+        "historical_score": 0.0,
+        "historical_status": "ok",
+        "instruction": "Could you turn my image into CYMK mode within GIMP ?"
+      },
+      {
+        "domain": "gimp",
+        "task_id": "2a729ded-3296-423d-aec4-7dd55ed5fbb3",
+        "historical_label": "wrong",
+        "historical_score": 0.0,
+        "historical_status": "ok",
+        "instruction": "Could you make the background of this image transparent for me?"
+      },
+      {
+        "domain": "gimp",
+        "task_id": "06ca5602-62ca-47f6-ad4f-da151cde54cc",
+        "historical_label": "correct",
+        "historical_score": 1.0,
+        "historical_status": "ok",
+        "instruction": "Could you help me set the image to Palette-Based?"
+      }
+    ],
+    "libreoffice_calc": [
+      {
+        "domain": "libreoffice_calc",
+        "task_id": "0326d92d-d218-48a8-9ca1-981cd6d064c7",
+        "historical_label": "wrong",
+        "historical_score": 0.0,
+        "historical_status": "ok",
+        "instruction": "Calculate the total sales in an underneath row called \"Total\" and display the total of each month as bars. Then calculate the month-on-month growth percentage for Feb to Jun in another row called \"Growth\" and show them in a line chart (Jan should be omitted in the chart as well). Set the chart titles as the two row headers respectively."
+      },
+      {
+        "domain": "libreoffice_calc",
+        "task_id": "1954cced-e748-45c4-9c26-9855b97fbc5e",
+        "historical_label": "wrong",
+        "historical_score": 0.0,
+        "historical_status": "ok",
+        "instruction": "Create a Pivot Table in a new sheet (Sheet2) to count how many times each \"Invoice No.\" appears."
+      },
+      {
+        "domain": "libreoffice_calc",
+        "task_id": "01b269ae-2111-4a07-81fd-3fcd711993b0",
+        "historical_label": "correct",
+        "historical_score": 1.0,
+        "historical_status": "ok",
+        "instruction": "Fill all the blank cells in B1:E30 with the value in the cell above it. Finish the work and don't touch irrelevant regions, even if they are blank."
+      }
+    ],
+    "libreoffice_impress": [
+      {
+        "domain": "libreoffice_impress",
+        "task_id": "04578141-1d42-4146-b9cf-6fab4ce5fd74",
+        "historical_label": "wrong",
+        "historical_score": 0.0,
+        "historical_status": "ok",
+        "instruction": "Change the text color in the textboxes to on slide 1 yellow, red, and green, respectively, in top-to-bottom order. Use exactly these colors—no variations (e.g., no dark red, light green, etc.)."
+      },
+      {
+        "domain": "libreoffice_impress",
+        "task_id": "05dd4c1d-c489-4c85-8389-a7836c4f0567",
+        "historical_label": "wrong",
+        "historical_score": 0.0,
+        "historical_status": "ok",
+        "instruction": "Align the text of the first textbox on slide 3 to the right, on slide 4 to the center, and on slide 5 to the left. Ensure that the alignment is applied correctly to each respective slide."
+      },
+      {
+        "domain": "libreoffice_impress",
+        "task_id": "08aced46-45a2-48d7-993b-ed3fb5b32302",
+        "historical_label": "correct",
+        "historical_score": 1.0,
+        "historical_status": "ok",
+        "instruction": "Give the slide 2 the right aligned title, \"Note\"."
+      }
+    ],
+    "libreoffice_writer": [
+      {
+        "domain": "libreoffice_writer",
+        "task_id": "0810415c-bde4-4443-9047-d5f70165a697",
+        "historical_label": "wrong",
+        "historical_score": 0.0,
+        "historical_status": "ok",
+        "instruction": "Make the line spacing of first two paragraph into double line spacing"
+      },
+      {
+        "domain": "libreoffice_writer",
+        "task_id": "0b17a146-2934-46c7-8727-73ff6b6483e8",
+        "historical_label": "wrong",
+        "historical_score": 0.0,
+        "historical_status": "ok",
+        "instruction": "Help me change the 2 in \"H2O\" to a subscript."
+      },
+      {
+        "domain": "libreoffice_writer",
+        "task_id": "0a0faba3-5580-44df-965d-f562a99b291c",
+        "historical_label": "correct",
+        "historical_score": 1.0,
+        "historical_status": "ok",
+        "instruction": "I would like to make the first three words of the sentence left-aligned and the rest right-aligned. I basically want to have some empty space in the middle to add some photos. Assume that every sentence will have at least three words. Could you help me on alignment for me using tabstops?"
+      }
+    ],
+    "multi_apps": [
+      {
+        "domain": "multi_apps",
+        "task_id": "09a37c51-e625-49f4-a514-20a773797a8a",
+        "historical_label": "wrong",
+        "historical_score": 0.8302980951698047,
+        "historical_status": "ok",
+        "instruction": "I've received a request from my friend who asked for assistance in editing an image. The document with the requirements and the picture to be adjusted are on the Desktop. Please make the necessary modifications to the image as his instructions and save the edited picture as \"pic.jpg\" on the Desktop. Thank you!"
+      },
+      {
+        "domain": "multi_apps",
+        "task_id": "0e5303d4-8820-42f6-b18d-daf7e633de21",
+        "historical_label": "wrong",
+        "historical_score": 0.0,
+        "historical_status": "ok",
+        "instruction": "I want to learn python programming and my friend recommends me this course website. I have grabbed the lecture slide for week 0. Please download the PDFs for other weeks into the opened folder and leave the file name as-it-is."
+      },
+      {
+        "domain": "multi_apps",
+        "task_id": "00fa164e-2612-4439-992e-157d019a8436",
+        "historical_label": "correct",
+        "historical_score": 1.0,
+        "historical_status": "ok",
+        "instruction": "I need to include the experiment results from \"~/Documents/awesome-desktop/expe-results.xlsx\" into the currently writing report. Specifically, extract the results of GPT-4 and insert a table into the \"Main Results\" section of my report. Remember to paste the table header, too."
+      }
+    ]
+  }
+}

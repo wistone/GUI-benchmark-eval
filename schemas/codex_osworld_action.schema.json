@@ -9,7 +9,11 @@
     "action": {
       "type": "string",
       "description": "Either pyautogui Python code to execute in the Ubuntu VM, or exactly WAIT, DONE, or FAIL."
+    },
+    "verification": {
+      "type": "string",
+      "description": "Concrete verification plan or evidence. For DONE/FAIL, describe the exact checked condition that justifies the final answer."
     }
   },
-  "required": ["thought", "action"]
+  "required": ["thought", "action", "verification"]
 }

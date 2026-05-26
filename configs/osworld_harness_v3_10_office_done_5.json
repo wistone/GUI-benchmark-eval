@@ -1,0 +1,13 @@
+{
+  "name": "osworld_harness_v3_10_office_done_5",
+  "harness": "v3.10",
+  "created_at": "2026-05-26",
+  "strategy": "Keep V3.9 wins and fix Office early-DONE save detection. Validate Writer recovery first, then exact-color, download, PDF generation, and Chrome preservation.",
+  "tasks": [
+    { "domain": "libreoffice_writer", "task_id": "0810415c-bde4-4443-9047-d5f70165a697" },
+    { "domain": "libreoffice_impress", "task_id": "04578141-1d42-4146-b9cf-6fab4ce5fd74" },
+    { "domain": "multi_apps", "task_id": "0e5303d4-8820-42f6-b18d-daf7e633de21" },
+    { "domain": "multi_apps", "task_id": "185f29bd-5da0-40a6-b69c-ba7f4e0324ef" },
+    { "domain": "chrome", "task_id": "030eeff7-b492-4218-b312-701ec99ee0cc" }
+  ]
+}

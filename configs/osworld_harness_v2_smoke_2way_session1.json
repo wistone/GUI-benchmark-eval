@@ -1,0 +1,79 @@
+{
+  "tasks": [
+    {
+      "domain": "chrome",
+      "task_id": "2ae9ba84-3a0d-4d4c-8338-3a1478dc5fe3",
+      "historical_label": "wrong",
+      "historical_score": 0.0,
+      "historical_status": "ok",
+      "instruction": "Lately I have changed my English name to Thomas. I want to update my username. Could you help me change the username in chrome profiles to Thomas?"
+    },
+    {
+      "domain": "gimp",
+      "task_id": "2a729ded-3296-423d-aec4-7dd55ed5fbb3",
+      "historical_label": "wrong",
+      "historical_score": 0.0,
+      "historical_status": "ok",
+      "instruction": "Could you make the background of this image transparent for me?"
+    },
+    {
+      "domain": "gimp",
+      "task_id": "06ca5602-62ca-47f6-ad4f-da151cde54cc",
+      "historical_label": "correct",
+      "historical_score": 1.0,
+      "historical_status": "ok",
+      "instruction": "Could you help me set the image to Palette-Based?"
+    },
+    {
+      "domain": "libreoffice_calc",
+      "task_id": "1954cced-e748-45c4-9c26-9855b97fbc5e",
+      "historical_label": "wrong",
+      "historical_score": 0.0,
+      "historical_status": "ok",
+      "instruction": "Create a Pivot Table in a new sheet (Sheet2) to count how many times each \"Invoice No.\" appears."
+    },
+    {
+      "domain": "libreoffice_impress",
+      "task_id": "05dd4c1d-c489-4c85-8389-a7836c4f0567",
+      "historical_label": "wrong",
+      "historical_score": 0.0,
+      "historical_status": "ok",
+      "instruction": "Align the text of the first textbox on slide 3 to the right, on slide 4 to the center, and on slide 5 to the left. Ensure that the alignment is applied correctly to each respective slide."
+    },
+    {
+      "domain": "libreoffice_impress",
+      "task_id": "08aced46-45a2-48d7-993b-ed3fb5b32302",
+      "historical_label": "correct",
+      "historical_score": 1.0,
+      "historical_status": "ok",
+      "instruction": "Give the slide 2 the right aligned title, \"Note\"."
+    },
+    {
+      "domain": "libreoffice_writer",
+      "task_id": "0b17a146-2934-46c7-8727-73ff6b6483e8",
+      "historical_label": "wrong",
+      "historical_score": 0.0,
+      "historical_status": "ok",
+      "instruction": "Help me change the 2 in \"H2O\" to a subscript."
+    },
+    {
+      "domain": "multi_apps",
+      "task_id": "0e5303d4-8820-42f6-b18d-daf7e633de21",
+      "historical_label": "wrong",
+      "historical_score": 0.0,
+      "historical_status": "ok",
+      "instruction": "I want to learn python programming and my friend recommends me this course website. I have grabbed the lecture slide for week 0. Please download the PDFs for other weeks into the opened folder and leave the file name as-it-is."
+    },
+    {
+      "domain": "multi_apps",
+      "task_id": "00fa164e-2612-4439-992e-157d019a8436",
+      "historical_label": "correct",
+      "historical_score": 1.0,
+      "historical_status": "ok",
+      "instruction": "I need to include the experiment results from \"~/Documents/awesome-desktop/expe-results.xlsx\" into the currently writing report. Specifically, extract the results of GPT-4 and insert a table into the \"Main Results\" section of my report. Remember to paste the table header, too."
+    }
+  ],
+  "source": "/Users/shijianping/Work/GUI-benchmark-eval/configs/osworld_harness_v2_smoke_all.json",
+  "session": 1,
+  "parallel_sessions": 2
+}

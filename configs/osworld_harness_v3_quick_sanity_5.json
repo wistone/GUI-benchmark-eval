@@ -1,0 +1,63 @@
+{
+  "name": "osworld_harness_v3_quick_sanity_5",
+  "harness": "v3",
+  "created_at": "2026-05-25",
+  "strategy": "5 high-signal samples covering V2 regression, preserved infeasible detection, media verification, shortcut verification, and multi-app download verification.",
+  "tasks": [
+    {
+      "domain": "libreoffice_calc",
+      "task_id": "01b269ae-2111-4a07-81fd-3fcd711993b0",
+      "sample_bucket": "v2_regression_from_historical_correct",
+      "selection_reason": "Avoid over-repair on range fill; V2 changed 1.0 to 0.0.",
+      "historical_label": "correct",
+      "historical_score": 1.0,
+      "v2_score": 0.0,
+      "v2_status": "ok",
+      "instruction": "Fill all the blank cells in B1:E30 with the value in the cell above it. Finish the work and don't touch irrelevant regions, even if they are blank."
+    },
+    {
+      "domain": "chrome",
+      "task_id": "480bcfea-d68f-4aaa-a0a9-2589ef319381",
+      "sample_bucket": "preserve_infeasible_detection",
+      "selection_reason": "Keep V2 gain: correctly FAIL unavailable Chrome UI flag.",
+      "historical_label": "wrong_or_error",
+      "historical_score": 0.0,
+      "v2_score": 1.0,
+      "v2_status": "ok",
+      "instruction": "I do not like the design of the new 2023 chrome UI. I want to keep using the original one. Can you disable the new 2023 version chrome UI for me? "
+    },
+    {
+      "domain": "vlc",
+      "task_id": "8f080098-ddb1-424c-b438-4e96e5e4786e",
+      "sample_bucket": "media_file_verification",
+      "selection_reason": "V2 saw MP3 filename but evaluator gave 0; V3 should verify codec/content.",
+      "historical_label": "unknown",
+      "historical_score": null,
+      "v2_score": 0.0,
+      "v2_status": "ok",
+      "instruction": "Could you convert the song from this music video as an MP3 file? I'd like to have it on my device to play whenever I want. Please save the file just on the desktop and title the file \"Baby Justin Bieber.mp3.\" I really appreciate your help!"
+    },
+    {
+      "domain": "vs_code",
+      "task_id": "930fdb3b-11a8-46fe-9bac-577332e2640e",
+      "sample_bucket": "shortcut_behavior_verification",
+      "selection_reason": "V2 saw keybinding UI but evaluator gave 0; V3 should verify underlying keybindings/effect.",
+      "historical_label": "unknown",
+      "historical_score": null,
+      "v2_score": 0.0,
+      "v2_status": "ok",
+      "instruction": "Please help me create a shortcut \"ctrl+j\" to move cursor focus from terminal to editor in VS Code."
+    },
+    {
+      "domain": "multi_apps",
+      "task_id": "0e5303d4-8820-42f6-b18d-daf7e633de21",
+      "sample_bucket": "multi_app_download_verification",
+      "selection_reason": "V2 download bubble looked complete but score stayed 0; V3 should verify filesystem set.",
+      "historical_label": "wrong_or_error",
+      "historical_score": 0.0,
+      "v2_score": 0.0,
+      "v2_status": "ok",
+      "instruction": "I want to learn python programming and my friend recommends me this course website. I have grabbed the lecture slide for week 0. Please download the PDFs for other weeks into the opened folder and leave the file name as-it-is."
+    }
+  ]
+}
